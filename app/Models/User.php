@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'company_id',
+        'isOwner'
     ];
 
     /**
@@ -41,4 +43,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    #################### Relation ########################
+
+    public function Company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+    ######################################################
+    #################### Accessor ########################
+
+    public function setPasswordAttribute($value)
+    {
+     return $this->attributes['password']=bcrypt($value);
+    }
+    ######################################################
 }
