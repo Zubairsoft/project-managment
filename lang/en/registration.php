@@ -1,7 +1,9 @@
 <?php
 
 return [
-
+    'login'=>[
+        'success'=>"log in successfully",
+       ],
     'response'=>[
         'success'=>'data saving successfully',
         'error'=>'error data dose not saving successfully'

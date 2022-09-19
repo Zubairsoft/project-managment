@@ -23,7 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'company_id',
-        'isOwner'
+        'role',
+        'is_active'
     ];
 
     /**
@@ -50,7 +51,12 @@ class User extends Authenticatable
 
     public function Company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->hasOne(Company::class);
+    }
+
+    public function companyMember()
+    {
+        return $this->belongsTo(Company::class,'company_id');
     }
     ######################################################
     #################### Accessor ########################

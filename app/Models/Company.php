@@ -10,23 +10,23 @@ class Company extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_name',
-        'owner_name',
+        'name',
+        'owner_id'
        
     ];
 
     
 
     ################ Relation #####################
-    public function user()
+    public function owner()
     {
-     return $this->hasMany(User::class);
+     return $this->belongsTo(User::class,'owner_id');
     }
-    
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
     ###############################################
-    ##################### Accessor ################
-    public function setPasswordAttribute($value)
-    {
-     return $this->attributes['password']=bcrypt($value);
-    }
 }
