@@ -22,6 +22,7 @@ class Company extends Model
     {
      return $this->hasMany(User::class);
     }
+    
     ###############################################
     ##################### Accessor ################
     public function setPasswordAttribute($value)
