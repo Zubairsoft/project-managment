@@ -15,6 +15,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $validated_data=$request->validated();
+        
         if (!auth()->attempt($validated_data)) {
             return errorResponse(null,__('auth.failed'),401);
         }
