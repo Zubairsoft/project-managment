@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\ProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,6 +22,11 @@ class AuthController extends Controller
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
 
         return successResponse(['user' => auth()->user(), 'access_token' => $accessToken],__('registration.login.success'));
+    }
+
+    public function profile(){
+    return successResponse(new ProfileResource(auth()->user()),__('response.success'),200);
+    
     }
 
     public function logout()

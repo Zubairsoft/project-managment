@@ -24,5 +24,6 @@ Route::post('/registration',RegistrationController::class)->name('company.regist
 Route::post('/login',[AuthController::class,'login'])->name('login');
 
 Route::group(['middleware'=>'auth:api'],function(){
+    Route::get('/profile',[AuthController::class,'profile'])->name('profile');
     Route::post('/logout',[AuthController::class,'logout'])->name('logout');
 });

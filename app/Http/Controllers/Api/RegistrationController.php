@@ -28,10 +28,10 @@ class RegistrationController extends Controller
                 'email'=>$validated_data['email'],
                 'password'=>$validated_data['password'],
                 'is_active'=>true,
-                'role'=>'owner'
         ]);
         
-
+        
+        $user->assignRole('owner');
         $company->owner_id=$user->id;
         $company->save();
 

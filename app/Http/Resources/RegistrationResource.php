@@ -16,7 +16,7 @@ class RegistrationResource extends JsonResource
     {
         return [
             'companyName'=>$this->name,
-            'account_info'=>$this->owner(),
+            'accountInfo'=>new UserResource($this->owner),
            
         ];
     }
