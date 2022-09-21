@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -62,6 +63,13 @@ class User extends Authenticatable
     public function companyMember()
     {
         return $this->belongsTo(Company::class,'company_id');
+    }
+    ######################################################
+
+    ################### scope  ###########################
+    public function scopeGetEmployees(Builder $query)
+    {
+    $query->where('company_id',auth()->user()->company_id)->where('id','<>',auth()->user()->id);
     }
     ######################################################
     #################### Accessor ########################

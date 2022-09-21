@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Resources\CompanyResource;
 
 class CompanyController extends Controller
 {
@@ -19,26 +20,9 @@ class CompanyController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+   
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCompanyRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreCompanyRequest $request)
-    {
-        //
-    }
+   
 
     /**
      * Display the specified resource.
@@ -51,16 +35,7 @@ class CompanyController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Company $company)
-    {
-        //
-    }
+  
 
     /**
      * Update the specified resource in storage.
@@ -71,7 +46,13 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        //
+        $this->authorize('update');
+       $validated_data=$request->validated();
+       $update_data=$company->update($validated_data);
+       if ($update_data) {
+        return successResponse(new CompanyResource($company),__('response.success'),201);
+       }
+       return errorResponse(null,__('response.error'),404);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCompanyRequest extends FormRequest
+class ProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,8 @@ class UpdateCompanyRequest extends FormRequest
     public function rules()
     {
         return [
-          'name'=>'required'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'name.required'=>__('registration.company.name.required')
+            'name'=>['required','min:4','max:100'],
+            'password'=>['required','min:4','confirmed']
         ];
     }
 }

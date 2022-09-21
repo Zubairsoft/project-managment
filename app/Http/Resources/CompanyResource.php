@@ -16,6 +16,8 @@ class CompanyResource extends JsonResource
     {
 return [
     'companyName'=>$this->name,
+     'accountInfo'=>new UserResource($this->owner),
+
 ];
     }
 }

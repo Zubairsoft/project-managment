@@ -1,7 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\auth\AuthController;
-use App\Http\Controllers\Api\RegistrationController;
+use App\Http\Controllers\Api\v1\auth\AuthController;
+use App\Http\Controllers\Api\v1\CompanyController;
+use App\Http\Controllers\Api\v1\EmployeeController;
+use App\Http\Controllers\Api\v1\ProfileController;
+use App\Http\Controllers\Api\v1\RegistrationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +27,16 @@ Route::post('/registration',RegistrationController::class)->name('company.regist
 Route::post('/login',[AuthController::class,'login'])->name('login');
 
 Route::group(['middleware'=>'auth:api'],function(){
-    Route::get('/profile',[AuthController::class,'profile'])->name('profile');
+    Route::get('/profile',[AuthController::class,'profile'])->name('profile.show');
+    Route::post('/profile',ProfileController::class)->name('profile.update');
+
     Route::post('/logout',[AuthController::class,'logout'])->name('logout');
+
+    Route::group(['middleware'=>['role:owner']],function (){
+
+        Route::apiResource('/company',CompanyController::class)->except('store');
+        Route::apiResource('/employees',EmployeeController::class)->except('index');
+        Route::get('employees',[EmployeeController::class,'index']);
+
+    });
 });
