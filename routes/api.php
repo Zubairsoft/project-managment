@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\auth\AuthController;
+use App\Http\Controllers\Api\v1\BoardController;
 use App\Http\Controllers\Api\v1\CompanyController;
 use App\Http\Controllers\Api\v1\EmployeeController;
 use App\Http\Controllers\Api\v1\ProfileController;
@@ -37,6 +38,15 @@ Route::group(['middleware'=>'auth:api'],function(){
         Route::apiResource('/company',CompanyController::class)->except('store');
         Route::apiResource('/employees',EmployeeController::class)->except('index');
         Route::get('employees',[EmployeeController::class,'index']);
+        Route::get('boards',[BoardController::class,'index'])->name('boards.index');
+        Route::post('boards',[BoardController::class,'store'])->name('boards.store');
+        Route::get('boards/{board}',[BoardController::class,'show'])->name('boards.show');
+        Route::patch('boards/{board}',[BoardController::class,'update'])->name('boards.update');
+        Route::delete('boards/{board}',[BoardController::class,'destroy'])->name('boards.delete');
+
+
+
+
 
     });
 });

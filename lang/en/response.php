@@ -10,6 +10,10 @@ return [
 
     'update'=>[
         'success'=>'data updated successfully',
-        'error' =>"error happend when the updated data"
+        'error' =>"error happened when the updated data"
+    ],
+    'store'=>[
+        'success'=>'data storing successfully',
+        'error' =>"error happened when the storing data"
     ]
 ];

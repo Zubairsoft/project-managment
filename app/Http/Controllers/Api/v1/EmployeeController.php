@@ -99,9 +99,6 @@ class EmployeeController extends Controller
     public function destroy($id)
     {
        $employee=User::findOrFail($id);
-    //    if ($employee==null) {
-    //    return errorResponse(null,__('response.error'),404);
-    //    }
        $employee->delete();
        return successResponse(null,__('response.delete.success'),204);
        

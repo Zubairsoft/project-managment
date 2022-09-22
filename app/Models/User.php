@@ -64,6 +64,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class,'company_id');
     }
+
+    public function boards()
+    {
+        return $this->hasMany(Board::class);
+    }
     ######################################################
 
     ################### scope  ###########################
