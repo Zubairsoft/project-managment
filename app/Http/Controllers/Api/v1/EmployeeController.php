@@ -57,15 +57,13 @@ class EmployeeController extends Controller
      */
     public function show( $id)
     {
-        //
-        $employee=User::find($id);
-        // return $employee;
 
-        if ($employee===null)
-        {
-            return errorResponse(null,__('response.error'),404);
-        }
+        $employee=User::findOrFail($id);
 
+        // if ($employee===null)
+        // {
+        //     return errorResponse(null,__('response.error'),404);
+        // }
             return successResponse($employee,__('response.success'),200);
     }
 
@@ -76,16 +74,16 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreEmployee $request, $id)
+     public function update(StoreEmployee $request, $id)
     { 
        
         $validated_data=$request->validated();
-        $employee=User::find($id);
-        if ( $employee === null) {
-            # code...
-            return errorResponse(null,__('response.error'),404);
-        }
-        $update_employee= $employee->update($validated_data);
+        $employee=User::findOrFail($id);
+        // if ( $employee === null) {
+        //     # code...
+        //     return errorResponse(null,__('response.error'),404);
+        // }
+         $employee->update($validated_data);
       
           return successResponse($employee ,__('response.success'),201);
       
@@ -100,12 +98,13 @@ class EmployeeController extends Controller
      */
     public function destroy($id)
     {
-       $employee=User::find($id);
-       if ($employee==null) {
-       return errorResponse(null,__('response.error'),404);
-       }
+       $employee=User::findOrFail($id);
+    //    if ($employee==null) {
+    //    return errorResponse(null,__('response.error'),404);
+    //    }
        $employee->delete();
        return successResponse(null,__('response.delete.success'),204);
+       
 
     }
 }
