@@ -16,6 +16,9 @@ return [
     'failed' => 'هدا الحساب لا يتطابق مع اي من سجلاتنا',
     'password' => 'كلمة المرور غير صحيحة',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'logout'  =>"تم تسجيل الدخول بنجاح"
+    'logout'  =>"تم تسجيل الدخول بنجاح",
+
+    'authorize'=> 'عذرا انت غير مصرح  للقيام بهدا الاجراء',
+
 
 ];

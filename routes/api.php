@@ -6,7 +6,8 @@ use App\Http\Controllers\Api\v1\CompanyController;
 use App\Http\Controllers\Api\v1\EmployeeController;
 use App\Http\Controllers\Api\v1\ProfileController;
 use App\Http\Controllers\Api\v1\RegistrationController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\v1\BoardListController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,20 +34,43 @@ Route::group(['middleware'=>'auth:api'],function(){
 
     Route::post('/logout',[AuthController::class,'logout'])->name('logout');
 
+   
+
     Route::group(['middleware'=>['role:owner']],function (){
 
         Route::apiResource('/company',CompanyController::class)->except('store');
         Route::apiResource('/employees',EmployeeController::class)->except('index');
         Route::get('employees',[EmployeeController::class,'index']);
+
+        ###################### Board Routes #################################################
+
         Route::get('boards',[BoardController::class,'index'])->name('boards.index');
         Route::post('boards',[BoardController::class,'store'])->name('boards.store');
         Route::get('boards/{board}',[BoardController::class,'show'])->name('boards.show');
         Route::patch('boards/{board}',[BoardController::class,'update'])->name('boards.update');
         Route::delete('boards/{board}',[BoardController::class,'destroy'])->name('boards.delete');
 
+        ######################################################################################################
+
+        ###################### List Routes #################################################
+
+        Route::post('boards/{board}/list',[BoardListController::class,'store'])->name('list.store');
+        Route::patch('boards/{board}/list/{list}',[BoardListController::class,'update'])->name('list.update');
+        Route::delete('boards/{board}/list/{list}',[BoardListController::class,'destroy'])->name('list.delete');
+                
+        ######################################################################################################
 
 
 
+
+
+    });
+
+    Route::group(['middleware'=>['role:employee|owner']],function(){
+    ####################### List Route #######################################
+    Route::get('boards/{board}/list',[BoardListController::class,'index'])->name('list.index');
+    Route::get('boards/{board}/list/{list}',[BoardListController::class,'show'])->name('list.show');
+    ##########################################################################
 
     });
 });
