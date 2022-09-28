@@ -18,6 +18,10 @@ return [
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'logout'  =>" logout successfully ",
     'authorize'=> 'sorry you are not authorize',
+    'user'=>[
+        'active'=>'active',
+        'block'=>'block',
 
+    ]
 
 ];

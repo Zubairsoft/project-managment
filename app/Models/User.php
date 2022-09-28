@@ -69,6 +69,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Board::class);
     }
+
+    public function cards()
+    {
+     return $this->belongsToMany(Card::class,'members','user_id','card_id')->withTimestamps();
+    }
+
+    public function comments()
+    {
+return $this->hasMany(Comment::class);
+    }
     ######################################################
 
     ################### scope  ###########################
@@ -76,8 +86,15 @@ class User extends Authenticatable
     {
     $query->where('company_id',auth()->user()->company_id)->where('id','<>',auth()->user()->id);
     }
+
+   
     ######################################################
     #################### Accessor ########################
+
+    public function getIsActiveAttribute($value)
+    {
+        return $value==true?__('auth.user.active'):__('auth.user.block');
+    }
 
     public function setPasswordAttribute($value)
     {

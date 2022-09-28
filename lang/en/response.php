@@ -15,5 +15,9 @@ return [
     'store'=>[
         'success'=>'data storing successfully',
         'error' =>"error happened when the storing data"
+    ],
+
+    'data'=>[
+        'null'=>"not found :attribute data",
     ]
 ];
