@@ -26,16 +26,23 @@ class StoreCardRequest extends FormRequest
     public function rules()
     {
         return [ 
-          'card'=>  [
+          
                 'title'=>['required','max:254'],
                 'description'=>'nullable',
                 'priority'=>['required',Rule::in(Card::PRIORITY)],
-            ],
-            'member'=>    [
-                'member'=>'nullable',
-            ],
-
+            
           
+          
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'title.required'=>__('validation.required'),
+            'title.,max'=>__('validation.max.array'),
+
+            
         ];
     }
 

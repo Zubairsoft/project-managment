@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,6 +60,13 @@ class Card extends Model
     {
       return  $value==null?__('response.data.null',['attribute'=>'description']):$value;
     }
+    #################################################################
+    ##################### scope #####################################
+    public function  scopeAllCardWithSortWithPriority(Builder $query,$list_id)
+    {
+    return $query->where('list_id',$list_id)->orderBy('priority');
+    }
+
     #################################################################
 
 }

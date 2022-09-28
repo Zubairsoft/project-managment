@@ -18,7 +18,7 @@ class CardController extends Controller
      */
     public function index(Board $board,BoardList $list)
     {
-        $cards=Card::where('list_id',$list->id)->get();
+        $cards=Card::allCardWithSortWithPriority($list->id)->get();
         return successResponse($cards,__('response.success'));
     }
 
@@ -32,8 +32,7 @@ class CardController extends Controller
      */
     public function store(StoreCardRequest $request,Board $board ,BoardList $list)
     {
-        return $request['card'];
-        $validated_data=$request[0]->validated();
+        $validated_data=$request->validated();
         $card=$list->cards()->create($validated_data);
         return successResponse($card,__('response.store'),201);
     }
