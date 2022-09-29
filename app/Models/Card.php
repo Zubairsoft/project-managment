@@ -1,14 +1,17 @@
 <?php
 
 namespace App\Models;
-
+use Spatie\Image\Manipulations; // new added
+use Spatie\MediaLibrary\MediaCollections\Models\Media;//new added
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Card extends Model
+class Card extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory,InteractsWithMedia;
 
     protected $fillable=[
         'title',
@@ -18,6 +21,18 @@ class Card extends Model
     ];
 
     const PRIORITY=[1,2,3];
+
+    ########################################################
+    // public function registerMediaConversions(Media $media = null): void
+    // {
+    //     $this->addMediaConversion('thumb')
+    //         ->width(368)
+    //         ->height(232)
+    //         ->sharpen(10)
+    //         ->quality(60)
+    //         ->performOnCollections('cards');
+
+    // }
 
 
     ########################## Relation #############################

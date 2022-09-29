@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCommentRequest extends FormRequest
+class AttachmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,19 +24,8 @@ class StoreCommentRequest extends FormRequest
     public function rules()
     {
         return [
-            'comment'=>'required',
-            'file'=>['nullable','image']
-        ];
-    }
-
-
-    public function messages()
-    {
-        return [
-            'comment.required'=>__('validation.required'),
-            'file.image'=>__('validation.image'),
-
-            
+            'file'=>'array|max:4',
+            'file.*'=>['required','image']
         ];
     }
 }

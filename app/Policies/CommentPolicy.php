@@ -53,7 +53,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment)
     {
-        //
+        return $user->id===$comment->user_id;
     }
 
     /**
@@ -87,8 +87,8 @@ class CommentPolicy
      * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Comment $comment)
+    public function destroy(User $user, Comment $comment)
     {
-        //
+        return $user->id===$comment->user_id;
     }
 }

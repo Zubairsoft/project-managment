@@ -24,14 +24,17 @@ class UpdateCommentRequest extends FormRequest
     public function rules()
     {
         return [
-            'comment'=>'required'
+            'comment'=>'required',
+            'file'=>['nullable','image']
         ];
     }
 
    public function messages()
    {
     return [
-        'comment.required'=>__('validation.required')
+        'comment.required'=>__('validation.required'),
+        'file.image'=>__('validation.image'),
+
     ];
    }
 }

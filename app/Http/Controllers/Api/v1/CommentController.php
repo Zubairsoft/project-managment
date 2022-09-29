@@ -30,10 +30,16 @@ class CommentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreCommentRequest $request,Board $board , BoardList $list ,Card $card)
-    {
+    {   
         $validated_data=$request->validated();
         $validated_data['user_id']=auth()->user()->id;
-        $comment=$card->comments()->create($validated_data);
+        $comment=$card->comments()->create([
+            'comment'=>$validated_data['comment'],
+            'user_id'=>$validated_data['user_id']
+        ]);
+        if ($request->hasFile('file')) {
+            $comment->addMediaFromRequest('file')->toMediaCollection('comments');
+        }
         return successResponse($comment,__('response.store.success'),201);
 
     }
@@ -63,9 +69,15 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request,Board $board , BoardList $list ,Card $card, Comment $comment)
     {
-        $this->authorize('update');
+        $this->authorize('update',$comment);
         $validated_data=$request->validated();
-        $update_comment=$comment->update($validated_data);
+        $update_comment=$comment->update([
+            'comment'=>$validated_data['comment'],
+        ]);
+        if ($request->hasFile('file')) {
+            $comment->clearMediaCollection('comments');
+            $comment->addMediaFromRequest('file')->toMediaCollection('comments');
+        }
         return successResponse($comment,__('response.update.success'),201);
     }
 
@@ -77,11 +89,12 @@ class CommentController extends Controller
      */
     public function destroy(Board $board , BoardList $list ,Card $card, Comment $comment)
     {
-        // $this->authorize('destroy');
         $specific_board=Board::findOrFail($board->id);
         $specific_list=BoardList::where('board_id',$specific_board->id)->findOrFail($list->id);
         $specific_card=Card::where('list_id', $specific_list->id)->findOrFail($card->id);
         $specific_comment=Comment::where('card_id', $specific_card->id)->findOrFail($comment->id);
+        $this->authorize('destroy',$specific_comment);
+
         $delete_comment=$specific_comment->delete();
         return successResponse(null,__('response.delete.success'),204);
     }

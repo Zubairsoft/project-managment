@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\AttachmentController;
 use App\Http\Controllers\Api\v1\auth\AuthController;
 use App\Http\Controllers\Api\v1\BoardController;
 use App\Http\Controllers\Api\v1\CompanyController;
@@ -70,6 +71,9 @@ Route::group(['middleware'=>'auth:api'],function(){
         ######################################################################################################
         Route::post('boards/{board}/list/{list}/card/{card}/members',[MemberController::class,'assign'])->name('member.store');
         Route::delete('boards/{board}/list/{list}/card/{card}/members',[MemberController::class,'destroy'])->name('member.delete');
+        #######################################################################################################
+
+
 
 
 
@@ -100,6 +104,19 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::get('boards/{board}/list/{list}/card/{card}/comment/{comment}',[CommentController::class,'show'])->name('comment.show');
     Route::patch('boards/{board}/list/{list}/card/{card}/comment/{comment}',[CommentController::class,'update'])->name('comment.update');
     Route::delete('boards/{board}/list/{list}/card/{card}/comment/{comment}',[CommentController::class,'destroy'])->name('comment.delete');
+    #################################################################################
+    ##########################   Attachment Route    ##################################################
+    ###################################################################################################
+    Route::post('boards/{board}/list/{list}/card/{card}/attachment',[AttachmentController::class,'store'])->name('attachment.store');
+    Route::patch('boards/{board}/list/{list}/card/{card}/attachment',[AttachmentController::class,'update'])->name('attachment.update');
+    Route::delete('boards/{board}/list/{list}/card/{card}/attachment/{attachment}',[AttachmentController::class,'destroy'])->name('attachment.delete');
+    Route::get('boards/{board}/list/{list}/card/{card}/attachment/{attachment}',[AttachmentController::class,'show'])->name('attachment.delete');
+
+
+
+
+
+
 
 
 
