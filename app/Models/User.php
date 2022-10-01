@@ -3,14 +3,22 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+// use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+
+    protected $guard_name ='api';
+
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +29,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'company_id',
+        'is_active'
     ];
 
     /**
@@ -41,4 +51,54 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    #################### Relation ########################
+
+    public  function company()
+    {
+        return $this->hasOne(Company::class,'owner_id');
+    }
+
+    public function companyMember()
+    {
+        return $this->belongsTo(Company::class,'company_id');
+    }
+
+    public function boards()
+    {
+        return $this->hasMany(Board::class);
+    }
+
+    public function cards()
+    {
+     return $this->belongsToMany(Card::class,'members','user_id','card_id')->withTimestamps();
+    }
+
+    public function comments()
+    {
+return $this->hasMany(Comment::class);
+    }
+    ######################################################
+
+    ################### scope  ###########################
+    public function scopeGetEmployees(Builder $query)
+    {
+    $query->where('company_id',auth()->user()->company_id)->where('id','<>',auth()->user()->id);
+    }
+
+   
+    ######################################################
+    #################### Accessor ########################
+
+    public function getIsActiveAttribute($value)
+    {
+        return $value==true?__('auth.user.active'):__('auth.user.block');
+    }
+
+    public function setPasswordAttribute($value)
+    {
+     return $this->attributes['password']=bcrypt($value);
+    }
+    ######################################################
 }
