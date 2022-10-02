@@ -13,8 +13,8 @@ return [
     |
     */
     'lang'=>[
-        'required'=>"the language failed is required",
-        'support'=>"the language that selected is not support yet"
+        'required'=>"حقل اللغة مطلوب",
+        'support'=>"اللغة التي اخترتها ليست مدعومه "
     ],
 
     'accepted' => 'The :attribute must be accepted.',
@@ -121,7 +121,7 @@ return [
     'prohibited_unless' => 'The :attribute field is prohibited unless :other is in :values.',
     'prohibits' => 'The :attribute field prohibits :other from being present.',
     'regex' => 'The :attribute format is invalid.',
-    'required' => 'The :attribute field is required.',
+    'required' => 'هدا :attribute الحقل مطلوب.',
     'required_array_keys' => 'The :attribute field must contain entries for: :values.',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_unless' => 'The :attribute field is required unless :other is in :values.',

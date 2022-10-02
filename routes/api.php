@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\v1\BoardListController;
 use App\Http\Controllers\Api\v1\CardController;
 use App\Http\Controllers\Api\v1\ChangeCardListController;
 use App\Http\Controllers\Api\v1\CommentController;
+use App\Http\Controllers\Api\v1\LocalizationController;
 use App\Http\Controllers\Api\v1\MemberController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,7 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::post('/profile',ProfileController::class)->name('profile.update');
 
     Route::post('/logout',[AuthController::class,'logout'])->name('logout');
+    Route::post('change_language',LocalizationController::class)->name('language.change');
 
    
 
