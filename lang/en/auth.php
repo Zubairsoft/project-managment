@@ -21,6 +21,7 @@ return [
     'user'=>[
         'active'=>'active',
         'block'=>'block',
+        'block_account'=>"authorized because this account is blocked"
 
     ]
 
