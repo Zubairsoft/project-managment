@@ -13,12 +13,12 @@ class Board extends Model
     protected $fillable = [
         'title',
         'user_id',
-         
+
     ];
 
 
     ################ Relation ####################
-    public function user()
+    public function user()//todo member ??
     {
         return $this->belongsTo(User::class);
     }
@@ -26,7 +26,7 @@ class Board extends Model
 
     public function lists()
     {
-return $this->hasMany(BoardList::class,);
+return $this->hasMany(BoardList::class,);//todo: use laravel/pint
     }
     ##############################################
     ############ scopes ##########################

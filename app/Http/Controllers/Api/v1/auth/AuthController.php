@@ -15,7 +15,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $validated_data=$request->validated();
-        
+        //todo :get $credentials only
         if (!auth()->attempt($validated_data)) {
             return errorResponse(null,__('auth.failed'),401);
         }
@@ -27,7 +27,7 @@ class AuthController extends Controller
 
     public function profile(){
     return successResponse(new ProfileResource(auth()->user()),__('response.success'),200);
-    
+
     }
 
     public function logout()

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Comment extends Model implements HasMedia
+class Comment extends Model implements HasMedia//todo: comments model most be polymorphic
 {
     use HasFactory,InteractsWithMedia;
     protected $fillable=[

@@ -17,14 +17,14 @@ class BoardController extends Controller
     public function index()
     {
         $boards=Board::authBoards()->get();
-        if ($boards->count()===0) {
+        if ($boards->count()===0) {//todo: why ??
             return errorResponse(null,__('response.error'),404);
         }
             return successResponse($boards,__('response.success'));
 
     }
 
- 
+
 
     /**
      * Store a newly created resource in storage.
@@ -38,7 +38,7 @@ class BoardController extends Controller
         $validate_data['user_id']=auth()->user()->id;
         $board=Board::create($validate_data);
         return successResponse($board,__('response.store.success'),201);
-      
+
 
     }
 
@@ -53,7 +53,7 @@ class BoardController extends Controller
         return successResponse($board,__('response.success'),200);
     }
 
- 
+
     /**
      * Update the specified resource in storage.
      *
@@ -65,7 +65,7 @@ class BoardController extends Controller
     {
         $validate_data=$request->validated();
         $board->update($validate_data);
-        return successResponse($board,__('response.update.success'),201);
+        return successResponse($board,__('response.update.success'),201);//todo 200 or 202 or 204 with null data
     }
 
     /**
@@ -78,7 +78,7 @@ class BoardController extends Controller
     {
        $delete_board= $board->delete();
        if ($delete_board) {
-        return successResponse(null,__('response.delete.success'),204);
+        return successResponse(null,__('response.delete.success'),204);//to do should be 204
        }
     }
 }

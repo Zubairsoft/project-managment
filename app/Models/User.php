@@ -77,7 +77,7 @@ class User extends Authenticatable
 
     public function comments()
     {
-return $this->hasMany(Comment::class);
+return $this->hasMany(Comment::class);//todo: use laravel/pint
     }
     ######################################################
 
@@ -87,11 +87,11 @@ return $this->hasMany(Comment::class);
     $query->where('company_id',auth()->user()->company_id)->where('id','<>',auth()->user()->id);
     }
 
-   
+
     ######################################################
     #################### Accessor ########################
 
-    public function getIsActiveAttribute($value)
+    public function getIsActiveAttribute($value)//todo is return bool ony not string
     {
         return $value==true?__('auth.user.active'):__('auth.user.block');
     }
