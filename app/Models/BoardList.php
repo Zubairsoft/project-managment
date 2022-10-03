@@ -10,9 +10,9 @@ class BoardList extends Model
     use HasFactory;
 
     protected $fillable = [
-        'list_name',
+        'list_name',//todo only use name we know  its name of lis
         'board_id',
-         
+
     ];
 
     ########### Relation ####################
@@ -26,5 +26,5 @@ class BoardList extends Model
         return $this->hasMany(Card::class,'list_id');
     }
     ########################################
-   
+
 }

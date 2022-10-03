@@ -13,7 +13,7 @@ class LocalizationController extends Controller
     {
        $validated_data=$request->validated();
      App::setlocale($validated_data['lang']); //change locale app
-     session()->put('local',$validated_data['lang']) ;// make session with key local and value the request from lang
+     session()->put('local',$validated_data['lang']) ;// make session with key local and value the request from lang//todo my cache will be good
      return successResponse(['currentLanguage'=>App::getLocale()=="en"?__('language.en'):__('language.ar')],__('response.update.success'),201);
     }
 }

@@ -16,10 +16,10 @@ class ProfileResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'userName'=>$this->name,
+            'userName'=>$this->name,//todo need discussion
             'email'=>$this->email,
             'role'=>$this->getRoleNames()[0],
-            'companyInfo'=> new CompanyResource($this->companyMember)
+            'companyInfo'=> new CompanyResource($this->companyMember)//todo need discussion
         ];
     }
 }

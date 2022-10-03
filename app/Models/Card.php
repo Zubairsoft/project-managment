@@ -22,7 +22,7 @@ class Card extends Model implements HasMedia
 
     const PRIORITY=[1,2,3];
 
-    ########################################################
+    ########################################################//todo delete or add comment when will be used
     // public function registerMediaConversions(Media $media = null): void
     // {
     //     $this->addMediaConversion('thumb')
@@ -41,11 +41,12 @@ class Card extends Model implements HasMedia
      return $this->belongsTo(BoardList::class);
     }
 
-    public function users()
+    public function users()//todo assignedUsers ??
     {
         return $this->belongsToMany(User::class,'members','card_id','user_id')->withTimestamps();
 
     }
+    //todo Creator  Relation ??
 
     public function comments()
     {
@@ -54,13 +55,14 @@ class Card extends Model implements HasMedia
     #################################################################
 
     ########################### Scope ###############################
- 
+
 
     #################################################################
 
     ########################## Accessor #############################
-    public function getPriorityAttribute($value)
+    public function getPriorityAttribute($value)//todo :why you overrider main Attr ?
     {
+        //todo : switch  is better
         if ($value===1) {
             return __('priority.high');
         }elseif($value===2){
@@ -71,7 +73,7 @@ class Card extends Model implements HasMedia
         }
 
     }
-    public function getDescriptionAttribute($value)
+    public function getDescriptionAttribute($value)//todo :why you overrider main Attr ?
     {
       return  $value==null?__('response.data.null',['attribute'=>'description']):$value;
     }
