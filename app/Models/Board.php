@@ -18,15 +18,15 @@ class Board extends Model
 
 
     ################ Relation ####################
-    public function user()//todo member ??
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
 
     public function lists()
     {
-return $this->hasMany(BoardList::class,);//todo: use laravel/pint
+        return $this->hasMany(BoardList::class,);// use laravel/pint
     }
     ##############################################
     ############ scopes ##########################

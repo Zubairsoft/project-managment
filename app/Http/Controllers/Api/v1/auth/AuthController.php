@@ -14,9 +14,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $validated_data=$request->validated();
-        //todo :get $credentials only
-        if (!auth()->attempt($validated_data)) {
+        if (!auth()->attempt($request->only('email','password'))) {
             return errorResponse(null,__('auth.failed'),401);
         }
 

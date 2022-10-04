@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Comment extends Model implements HasMedia//todo: comments model most be polymorphic
+class Comment extends Model implements HasMedia
 {
     use HasFactory,InteractsWithMedia;
     protected $fillable=[
@@ -16,6 +15,12 @@ class Comment extends Model implements HasMedia//todo: comments model most be po
         'user_id',
         'card_id'
     ];
+
+    public function registerMediaCollections(): void
+    { 
+    $this->addMediaCollection('comments')->singleFile();
+    }
+    #################### Relation ############################################
 
     public function card()
     {
@@ -26,6 +31,5 @@ class Comment extends Model implements HasMedia//todo: comments model most be po
         return $this->belongsTo(User::class);
     }
 
-    #################### Relation ############################################
     ##########################################################################
 }

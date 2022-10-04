@@ -10,7 +10,7 @@ class BoardList extends Model
     use HasFactory;
 
     protected $fillable = [
-        'list_name',//todo only use name we know  its name of lis
+        'list_name',
         'board_id',
 
     ];

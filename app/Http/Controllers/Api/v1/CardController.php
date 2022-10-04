@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Http\Requests\StoreCardRequest;
 use App\Http\Requests\UpdateCardRequest;
+use App\Http\Resources\CardResource;
 use App\Models\Board;
 use App\Models\BoardList;
 
@@ -16,10 +17,12 @@ class CardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //todo make the authorize | and append attachment at card if exits
     public function index(Board $board,BoardList $list)
     {
+        $this->authorize('showAllCards',$board);
         $cards=Card::allCardWithSortWithPriority($list->id)->get();
-        return successResponse($cards,__('response.success'));
+        return successResponse(CardResource::collection($cards),__('response.success'));
     }
 
 
@@ -32,9 +35,10 @@ class CardController extends Controller
      */
     public function store(StoreCardRequest $request,Board $board ,BoardList $list)
     {
+        $this->authorize('addNewCard',$board);
         $validated_data=$request->validated();
         $card=$list->cards()->create($validated_data);
-        return successResponse($card,__('response.store'),201);
+        return successResponse(new CardResource($card),__('response.store'),201);
     }
 
     /**
@@ -45,11 +49,12 @@ class CardController extends Controller
      */
     public function show(Board $board ,BoardList $list,Card $card)
     { 
+        $this->authorize("showSingleCard",$board);
         $card_board=Board::findOrFail($board->id); // return  board
         $list_card=BoardList::where('board_id',$card_board->id)->findOrFail($list->id);// select * lists where id=$card_id and board_id=$board_id
         $specific_card=Card::where('list_id',$list_card->id)->findOrFail($card->id);// select * cards where id=$card_id and list_id=$list_id;
 
-        return successResponse($specific_card,__('response.success'));
+        return successResponse(new CardResource($specific_card),__('response.success'));
     }
 
  
@@ -62,9 +67,10 @@ class CardController extends Controller
      */
     public function update(UpdateCardRequest $request,Board $board,BoardList $list, Card $card)
     {
+        $this->authorize('updateCard',$board);
         $validated_data=$request->validated();
-        $update_card=$card->update($validated_data);
-        return successResponse($card,__('response.update.success'),201);
+        $card->update($validated_data);
+        return successResponse(new CardResource($card),__('response.update.success'),202);
     }
 
     /**
@@ -74,8 +80,9 @@ class CardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Board $board,BoardList $list,Card $card)
-    {
-      $delete_card=$card->delete();
+    { 
+      $this->authorize('destroyCard',$board);
+      $card->delete();
       return successResponse(null,__('response.delete.success'),204);
     }
 }

@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()//todo :where you used this?
+    public function up()
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();

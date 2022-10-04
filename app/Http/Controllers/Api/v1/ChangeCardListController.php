@@ -12,9 +12,9 @@ class ChangeCardListController extends Controller
 {
     public function __invoke (ChangeCardListRequest $request,Board $board ,BoardList $list ,Card $card)
     {
-        // return $card;
+    $this->authorize('changeCardList',$card);
     $validated_data=$request->validated();
-     $update_card=$card->update( $validated_data);
-     return successResponse($card,__('response.update.success'),201);
+    $card->update( $validated_data);
+     return successResponse($card,__('response.update.success'),202);
     }
 }

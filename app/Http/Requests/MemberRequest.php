@@ -33,18 +33,7 @@ class MemberRequest extends FormRequest
               'user_id.*'=>['required',Rule::in($employees_ids)]
         
               ];
-        // if ($this->isMethod('POST')) {
-
-        //     return $this->store();
-       
-        //    }elseif($this->isMethod('PATCH')){
-       
-        //        return $this->update(  $employees_ids);
-       
-        //    }elseif($this->isMethod('delete')){
-        //        return $this->delete($employees_ids);
-        //    }
-       
+   
     }
     public function messages()
     {
@@ -55,26 +44,5 @@ class MemberRequest extends FormRequest
 
     }
 
-    // public function store()
-    // {
-    //     return [
-    //         'user_id'=>'array',
-    //         'user_id.*'=>['required']
-
-    //       ];
-    // }
-
-    // public function update ($ids)
-    // {
-    //     return [
-    //         'user_id'=>['required',Rule::in($ids)]
-    //       ];
-    // }
-
-    // public function delete($ids)
-    // {
-    //     return [
-    //         'user_id'=>['required',Rule::in($ids)]
-    //       ];
-    // }
+  
 }

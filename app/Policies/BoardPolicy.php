@@ -10,15 +10,18 @@ class BoardPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the user can view any models.
+ 
+    
+     /**
+     * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
+     * @param  \App\Models\Board  $board
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function index(User $user, Board $board)
     {
-        //
+        return $user->id===$board->user_id;
     }
 
     /**
@@ -28,22 +31,18 @@ class BoardPolicy
      * @param  \App\Models\Board  $board
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Board $board)
+    public function show(User $user, Board $board)
     {
         return $user->id===$board->user_id;
     }
 
-    /**
-     * Determine whether the user can create models.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function create(User $user)
+    public function store(User $user, Board $board)
     {
-        //
+        return $user->id===$board->user_id;
     }
+    
 
+ 
     /**
      * Determine whether the user can update the model.
      *
@@ -53,7 +52,8 @@ class BoardPolicy
      */
     public function update(User $user, Board $board)
     {
-        //
+        return $user->id===$board->user_id;
+
     }
 
     /**
@@ -63,32 +63,90 @@ class BoardPolicy
      * @param  \App\Models\Board  $board
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Board $board)
+    public function destroy(User $user, Board $board)
     {
-        //
+        return $user->id===$board->user_id;
     }
 
     /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Board  $board
+     * determine which user can see all cards
+     * @param User $user
+     * @param Board $board
+     * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Board $board)
+    public function showAllCards(User $user,Board $board)
     {
-        //
+    return $user->company_id===$board->creator->company_id;
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Board  $board
+     * determine which user can add new card
+     * @param User $user
+     * @param Board $board
+     * 
+     * @return [type]
+     */
+    public function addNewCard(User $user,Board $board)
+    {
+    return $user->id===$board->user_id;
+    }
+
+    /**
+     * determine which user can show  card
+     * @param User $user
+     * @param Board $board
+     * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Board $board)
+    public function showSingleCard(User $user,Board $board)
     {
-        //
+    return $user->company_id===$board->creator->company_id;
     }
+
+    /**
+     * determine which user can update card
+     * @param User $user
+     * @param Board $board
+     * 
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateCard(User $user,Board $board)
+    {
+        return $user->id===$board->user_id;
+
+    }
+    
+    /**
+     * determine which user can destroy card
+     * @param User $user
+     * @param Board $board
+     * 
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function destroyCard(User $user,Board $board)
+    {
+        return $user->id===$board->user_id;
+
+    }
+
+
+    
+    public function assignMember(User $user,Board $board)
+    {
+    return $user->id===$board->user_id;
+    }
+
+    public function showAllMembers(User $user,Board $board)
+    {
+    return $user->company_id===$board->creator->company_id;
+    }
+    public function destroyMember(User $user,Board $board)
+    {
+        return $user->id===$board->user_id;
+
+    }
+
+  
+
 }

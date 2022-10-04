@@ -16,10 +16,9 @@ class ProfileResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'userName'=>$this->name,//todo need discussion
-            'email'=>$this->email,
+            'userName'=>$this->name,
             'role'=>$this->getRoleNames()[0],
-            'companyInfo'=> new CompanyResource($this->companyMember)//todo need discussion
+            'companyInfo'=> new CompanyResource($this->companyMember)
         ];
     }
 }

@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             AdminSeeder::class,
-//todo : no more seed ?/
+//TODO : no more seed ?/
 
         ]);
         // \App\Models\User::factory(10)->create();

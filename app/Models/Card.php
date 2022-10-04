@@ -22,17 +22,7 @@ class Card extends Model implements HasMedia
 
     const PRIORITY=[1,2,3];
 
-    ########################################################//todo delete or add comment when will be used
-    // public function registerMediaConversions(Media $media = null): void
-    // {
-    //     $this->addMediaConversion('thumb')
-    //         ->width(368)
-    //         ->height(232)
-    //         ->sharpen(10)
-    //         ->quality(60)
-    //         ->performOnCollections('cards');
-
-    // }
+    
 
 
     ########################## Relation #############################
@@ -41,12 +31,11 @@ class Card extends Model implements HasMedia
      return $this->belongsTo(BoardList::class);
     }
 
-    public function users()//todo assignedUsers ??
+    public function assignedUsers()
     {
         return $this->belongsToMany(User::class,'members','card_id','user_id')->withTimestamps();
 
     }
-    //todo Creator  Relation ??
 
     public function comments()
     {
@@ -60,22 +49,21 @@ class Card extends Model implements HasMedia
     #################################################################
 
     ########################## Accessor #############################
-    public function getPriorityAttribute($value)//todo :why you overrider main Attr ?
+    public function getPriorityStatusAttribute()
     {
-        //todo : switch  is better
-        if ($value===1) {
+        switch ($this->priority) {
+            case 1:
             return __('priority.high');
-        }elseif($value===2){
-           return __('priority.medium');
-        }else{
-            return __('priority.low');
-
+                break;
+            case 2:
+            return __('priority.medium');
+                break;
+            
+            default:
+                return __('priority.low');
+                break;
         }
 
-    }
-    public function getDescriptionAttribute($value)//todo :why you overrider main Attr ?
-    {
-      return  $value==null?__('response.data.null',['attribute'=>'description']):$value;
     }
     #################################################################
     ##################### scope #####################################
