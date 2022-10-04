@@ -18,22 +18,6 @@ class MemberController extends Controller
 {
    
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    // public function store(MemberRequest $request,Board $board ,BoardList $list,Card $card)
-    // {
-    //     $validated_data=$request->validated();
-    //     $card_board=Board::findOrFail($board->id); 
-    //     $list_card=BoardList::where('board_id',$card_board->id)->findOrFail($list->id);
-    //     $specific_card=Card::where('list_id',$list_card->id)->findOrFail($card->id);
-    //     $assign_members=$specific_card->users()->syncWithoutDetaching( $validated_data);
-    //     return successResponse($specific_card->users,__('response.store.success'),201);
-
-    // }
 
     /**
      * Display the specified resource.
@@ -43,8 +27,9 @@ class MemberController extends Controller
      */
     public function index(Board $board ,BoardList $list,Card $card)
     {
+        $this->authorize('showAllMembers',$board);
         $specific_card= Card::where('list_id',$list->id)->findOrFail($card->id);
-        $users=$specific_card->users()->get();
+        $users=$specific_card->assignedUsers()->get();
   
         return successResponse(  MemberResource::collection($users),__('response.success'));
     }
@@ -59,17 +44,17 @@ class MemberController extends Controller
      */
     public function assign(MemberRequest $request,Board $board ,BoardList $list,Card $card)
     {
-      $members= collect([...$request['user_id']])->map(function($r){
-        return ['user_id'=>$r];
+      $this->authorize('assignMember',$board);
+      $members= collect([...$request['user_id']])->map(function($value){
+        return ['user_id'=>$value];
       });
-        $validated_data=$request->validated();
         $card_board=Board::findOrFail($board->id); 
         $list_card=BoardList::where('board_id',$card_board->id)->findOrFail($list->id);
-        $specific_card=Card::where('list_id',$list_card->id)->findOrFail($card->id);//[1,2]
+        $specific_card=Card::where('list_id',$list_card->id)->findOrFail($card->id);
        
-        $update_members=$specific_card->users()->sync( $members);//sync read the object
+        $specific_card->assignedUsers()->sync( $members);//sync read the object
 
-        return successResponse($specific_card->users,__('response.update.success'),201);
+        return successResponse($specific_card->assignedUsers,__('response.update.success'),202);
     }
 
     /**
@@ -80,12 +65,12 @@ class MemberController extends Controller
      */
     public function destroy(MemberRequest $request,Board $board ,BoardList $list,Card $card)
     {
-        
+            $this->authorize('destroyMember',$board);
             $validated_data=$request->validated();
             $card_board=Board::findOrFail($board->id); 
             $list_card=BoardList::where('board_id',$card_board->id)->findOrFail($list->id);
             $specific_card=Card::where('list_id',$list_card->id)->findOrFail($card->id);
-            $delete_members=$specific_card->users()->detach( $validated_data);
+            $specific_card->assignedUsers()->detach( $validated_data);
             return successResponse(null,__('response.delete.success'),204);
         
         

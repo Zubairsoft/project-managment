@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEmployee;
+use App\Http\Requests\UpdateEmployee;
 use App\Http\Resources\ProfileResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -22,11 +24,7 @@ class EmployeeController extends Controller
     {
         $pages=$request->page??10;
         $employees=User::getEmployees()->paginate($pages);
-        if ($employees->count()==0) {
-           return errorResponse(null,__('response.error'),404);
-        }
-        
-        return successResponse($employees,__('response.success'),200);
+        return successResponse( UserResource::collection($employees),__('response.success'),200);
 
     }
 
@@ -42,11 +40,8 @@ class EmployeeController extends Controller
         $validated_data['company_id']=auth()->user()->company_id;
         $employee=User::create( $validated_data);
         $employee->assignRole('employee');
-        if ($employee) {
-          return successResponse(new ProfileResource($employee),__('registration.response.success'),201);
-        }
-        return errorResponse(null,__('registration.response.error'),404);
-
+        return successResponse(new ProfileResource($employee),__('registration.response.success'),201);
+ 
     }
 
     /**
@@ -55,16 +50,10 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show( $id)
+    public function show(User $employee)
     {
-
-        $employee=User::findOrFail($id);
-
-        // if ($employee===null)
-        // {
-        //     return errorResponse(null,__('response.error'),404);
-        // }
-            return successResponse($employee,__('response.success'),200);
+        $this->authorize('show',$employee);
+         return successResponse($employee,__('response.success'),200);
     }
 
     /**
@@ -74,20 +63,12 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     public function update(StoreEmployee $request, $id)
+     public function update(UpdateEmployee $request, User $employee)
     { 
-       
+       $this->authorize('update',$employee);
         $validated_data=$request->validated();
-        $employee=User::findOrFail($id);
-        // if ( $employee === null) {
-        //     # code...
-        //     return errorResponse(null,__('response.error'),404);
-        // }
-         $employee->update($validated_data);
-      
-          return successResponse($employee ,__('response.success'),201);
-      
-
+        $employee->update($validated_data);
+         return successResponse($employee ,__('response.success'),202);
     }
 
     /**
@@ -96,12 +77,11 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $employee)
     {
-       $employee=User::findOrFail($id);
+        $this->authorize('destroy',$employee);
        $employee->delete();
        return successResponse(null,__('response.delete.success'),204);
-       
-
+    
     }
 }

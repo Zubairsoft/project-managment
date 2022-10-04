@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/registration',RegistrationController::class)->name('company.register');
 Route::post('/login',[AuthController::class,'login'])->name('login');
 
-Route::group(['middleware'=>'auth:api'],function(){
+Route::group(['middleware'=>['auth:api','isActive']],function(){
     Route::get('/profile',[AuthController::class,'profile'])->name('profile.show');
     Route::post('/profile',ProfileController::class)->name('profile.update');
 
@@ -44,7 +44,7 @@ Route::group(['middleware'=>'auth:api'],function(){
 
     Route::group(['middleware'=>['role:owner']],function (){
 
-        Route::apiResource('/company',CompanyController::class)->except('store');
+        Route::patch('/company/{company}',CompanyController::class);
         Route::apiResource('/employees',EmployeeController::class)->except('index');
         Route::get('employees',[EmployeeController::class,'index']);
 

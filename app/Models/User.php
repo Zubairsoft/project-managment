@@ -87,13 +87,13 @@ return $this->hasMany(Comment::class);
     $query->where('company_id',auth()->user()->company_id)->where('id','<>',auth()->user()->id);
     }
 
-   
+
     ######################################################
     #################### Accessor ########################
 
-    public function getIsActiveAttribute($value)
+    public function getActiveStatusAttribute()
     {
-        return $value==true?__('auth.user.active'):__('auth.user.block');
+        return $this->is_active==true?__('auth.user.active'):__('auth.user.block');
     }
 
     public function setPasswordAttribute($value)

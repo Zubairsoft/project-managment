@@ -35,11 +35,7 @@ class RegistrationController extends Controller
         $company->owner_id=$user->id;
         $company->save();
 
+        return successResponse(new RegistrationResource($company),__('registration.response.success'),200);
         
-
-        if ($company && $user) {
-            return successResponse(new RegistrationResource($company),__('registration.response.success'),200);
-        }
-            return errorResponse([],__('registration.response.error'),404);
     }
 }

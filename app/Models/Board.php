@@ -13,20 +13,20 @@ class Board extends Model
     protected $fillable = [
         'title',
         'user_id',
-         
+
     ];
 
 
     ################ Relation ####################
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
 
     public function lists()
     {
-return $this->hasMany(BoardList::class,);
+        return $this->hasMany(BoardList::class,);// use laravel/pint
     }
     ##############################################
     ############ scopes ##########################

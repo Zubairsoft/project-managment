@@ -12,7 +12,7 @@ class BoardList extends Model
     protected $fillable = [
         'list_name',
         'board_id',
-         
+
     ];
 
     ########### Relation ####################
@@ -26,5 +26,5 @@ class BoardList extends Model
         return $this->hasMany(Card::class,'list_id');
     }
     ########################################
-   
+
 }

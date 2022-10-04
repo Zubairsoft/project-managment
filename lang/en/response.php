@@ -3,6 +3,8 @@
 return [
     'success'=>"data returned successfully",
     'error'  => " error not found data ",
+    'not_found'=>'the request is not found',
+
     'delete'=>[
         'success'=>"delete record successfully",
         'error'  =>"error record not deleting"

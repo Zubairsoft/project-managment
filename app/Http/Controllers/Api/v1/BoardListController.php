@@ -16,9 +16,11 @@ class BoardListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index(Board $board)
     {
-        $lists=BoardList::all();
+        $this->authorize('index',$board);
+        $lists=BoardList::where('board_id',$board->id)->get();
         return successResponse(BoardListResource::collection($lists),__('response.success'));
     }
 
@@ -31,7 +33,7 @@ class BoardListController extends Controller
      */
     public function store(StoreBoardListRequest $request,Board $board)
     {
-       
+        $this->authorize('store',$board);
         $validated_data=$request->validated();
         $list=$board->lists()->create($validated_data);
         return successResponse($list,__('response.store.success'),201);
@@ -46,7 +48,7 @@ class BoardListController extends Controller
      */
     public function show(Board $board,BoardList $list)
     {
-        //
+        $this->authorize('show',$board);
         return successResponse(new BoardListResource($list),__('response.success'));
     }
 
@@ -59,10 +61,10 @@ class BoardListController extends Controller
      */
     public function update(UpdateBoardListRequest $request,Board $board ,BoardList $list)
     {
-        //
+        $this->authorize('update',$board);
         $validated_data=$request->validated();
-        $update_list=$list->update($validated_data);
-        return successResponse($list,__('response.update.success'),201);
+        $list->update($validated_data);
+        return successResponse($list,__('response.update.success'),202);
     
     }
 
@@ -74,7 +76,8 @@ class BoardListController extends Controller
      */
     public function destroy(Board $board,BoardList $list)
     {
-       $delete=$list->delete();
+        $this->authorize('destroy',$board);
+       $list->delete();
        return successResponse(null,__('response.delete.success'),204);
     }
 }

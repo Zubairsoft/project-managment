@@ -22,17 +22,7 @@ class Card extends Model implements HasMedia
 
     const PRIORITY=[1,2,3];
 
-    ########################################################
-    // public function registerMediaConversions(Media $media = null): void
-    // {
-    //     $this->addMediaConversion('thumb')
-    //         ->width(368)
-    //         ->height(232)
-    //         ->sharpen(10)
-    //         ->quality(60)
-    //         ->performOnCollections('cards');
-
-    // }
+    
 
 
     ########################## Relation #############################
@@ -41,7 +31,7 @@ class Card extends Model implements HasMedia
      return $this->belongsTo(BoardList::class);
     }
 
-    public function users()
+    public function assignedUsers()
     {
         return $this->belongsToMany(User::class,'members','card_id','user_id')->withTimestamps();
 
@@ -54,26 +44,26 @@ class Card extends Model implements HasMedia
     #################################################################
 
     ########################### Scope ###############################
- 
+
 
     #################################################################
 
     ########################## Accessor #############################
-    public function getPriorityAttribute($value)
+    public function getPriorityStatusAttribute()
     {
-        if ($value===1) {
+        switch ($this->priority) {
+            case 1:
             return __('priority.high');
-        }elseif($value===2){
-           return __('priority.medium');
-        }else{
-            return __('priority.low');
-
+                break;
+            case 2:
+            return __('priority.medium');
+                break;
+            
+            default:
+                return __('priority.low');
+                break;
         }
 
-    }
-    public function getDescriptionAttribute($value)
-    {
-      return  $value==null?__('response.data.null',['attribute'=>'description']):$value;
     }
     #################################################################
     ##################### scope #####################################

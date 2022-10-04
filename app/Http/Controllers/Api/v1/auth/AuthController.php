@@ -14,9 +14,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $validated_data=$request->validated();
-        
-        if (!auth()->attempt($validated_data)) {
+        if (!auth()->attempt($request->only('email','password'))) {
             return errorResponse(null,__('auth.failed'),401);
         }
 
@@ -27,7 +25,7 @@ class AuthController extends Controller
 
     public function profile(){
     return successResponse(new ProfileResource(auth()->user()),__('response.success'),200);
-    
+
     }
 
     public function logout()
