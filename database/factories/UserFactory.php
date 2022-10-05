@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -16,7 +17,7 @@ class UserFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition()
-    {
+    { 
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),

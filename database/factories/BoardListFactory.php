@@ -16,8 +16,8 @@ class BoardListFactory extends Factory
      */
     public function definition()
     {
-        return [
-            //
-        ];
+        // return [
+        //     'list_name'=>['todo','in progress','test','done','hotfix'][rand(0,4)]
+        // ];
     }
 }
