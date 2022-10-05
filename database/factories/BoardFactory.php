@@ -17,7 +17,7 @@ class BoardFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'title'=>$this->faker->company(),
         ];
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\BoardList;
 use App\Models\Card;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CardSeeder extends Seeder
+class MemberSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,10 +16,9 @@ class CardSeeder extends Seeder
      */
     public function run()
     {
-        $list = BoardList::get();
-        Card::factory(50)->make()->each(function ($card) use ($list) {
-            $card->list_id = $list->random()->id;
-            $card->save();
+        Card::all()->each(function(Card $card){
+            $users=User::role('employee')->inRandomOrder()->take(2)->get()->pluck('id');
+            $card->assignedUsers()->sync($users);
         });
     }
 }

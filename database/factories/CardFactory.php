@@ -17,7 +17,9 @@ class CardFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'title'=>$this->faker->jobTitle(),
+            'description'=>$this->faker->sentences(2,true),
+            'priority'=>[1,2,3][rand(0,2)]
         ];
     }
 }

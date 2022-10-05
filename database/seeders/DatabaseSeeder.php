@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 
@@ -15,10 +16,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+        
         $this->call([
             RoleSeeder::class,
             AdminSeeder::class,
-//TODO : no more seed ?/
+            CompanySeeder::class,
+            UserSeeder::class,
+            BoardSeeder::class,
+            BoardListSeeder::class,
+            CardSeeder::class,
+            MemberSeeder::class,
+            CommentSeeder::class
+
+            
+
 
         ]);
         // \App\Models\User::factory(10)->create();
