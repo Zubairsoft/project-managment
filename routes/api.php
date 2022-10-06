@@ -129,6 +129,9 @@ Route::group(['middleware'=>['auth:api','isActive']],function(){
     Route::get('boards/{board}/list/{list}/card/{card}/tag',[TagController::class,'index'])->name('tag.index');
     Route::get('boards/{board}/list/{list}/card/{card}/tag/{tag}',[TagController::class,'show'])->name('tag.show');
     ############################################################################################
+    ############################## filter ######################################################
+    Route::get('boards/{board}/filter',[CardController::class,'filter']);
+    ############################################################################################
 
 
 

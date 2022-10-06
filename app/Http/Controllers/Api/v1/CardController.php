@@ -9,6 +9,9 @@ use App\Http\Requests\UpdateCardRequest;
 use App\Http\Resources\CardResource;
 use App\Models\Board;
 use App\Models\BoardList;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CardController extends Controller
 {
@@ -84,5 +87,30 @@ class CardController extends Controller
       $this->authorize('destroyCard',$board);
       $card->delete();
       return successResponse(null,__('response.delete.success'),204);
+    }
+
+
+    public function filter(Request $request,Board $board){
+       $list=$request->list??BoardList::where('board_id',$board->id)->pluck('id');
+       $assigned_members=$request->members??User::where('company_id',auth()->user()->company_id)->pluck('id');
+       $priority=$request->priority??Card::PRIORITY;
+       
+      $filter=DB::table('boards')->join('board_lists',function($join) use($board){
+        $join->on('boards.id','=','board_lists.board_id')
+        ->where('boards.id',$board->id);
+      })->join('cards',function($join)use($list,$priority){
+        $join->on('cards.list_id','=','board_lists.id')
+        ->whereIn('board_lists.id',$list)
+        ->whereIn('cards.priority',$priority);
+      })
+       ->join('members',function($join){
+        $join->on('cards.id','=','members.card_id');
+   })->join('users',function($join) use($assigned_members){
+       $join->on('members.user_id','=','users.id')
+       ->whereIn('members.user_id', $assigned_members);
+       })
+      ->select('cards.*','users.id as assigned_id','users.name as assigned_Name')->get();
+
+      return successResponse($filter,__('response.success'));
     }
 }
