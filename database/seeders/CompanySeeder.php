@@ -20,9 +20,11 @@ class CompanySeeder extends Seeder
         $owner->each(function(User $user){
             $user->assignRole('owner');
         });
-        Company::factory(3)->make()->each(function($company) use($owner){
+         Company::factory(3)->make()->each(function($company) use($owner){
          $company->owner_id=$owner->random()->id;
          $company->save();
+         
         });
+       
     }
 }

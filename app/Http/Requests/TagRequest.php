@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Tag;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UpdateBoardListRequest extends FormRequest
+class TagRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +26,8 @@ class UpdateBoardListRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'name'=>'required'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'list_name.required'=>__('validation.required')
+            'name'=>'required',
+            'color'=>['required',Rule::in(Tag::COLOR)]
         ];
     }
 }

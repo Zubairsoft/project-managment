@@ -24,7 +24,7 @@ class StoreBoardListRequest extends FormRequest
     public function rules()
     {
         return [
-            'list_name'=>'required'
+            'name'=>'required'
         ];
     }
 

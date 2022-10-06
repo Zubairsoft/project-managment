@@ -25,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\Board'   => 'App\Policies\BoardPolicy',
         'App\Models\User'    => 'App\Policies\EmployeePolicy',
         'App\Models\Card'    => 'App\Policies\CardPolicy',
+        'App\Models\Tag'    => 'App\Policies\TagPolicy',
 
         Company::class=>CompanyPolicy::class,
         

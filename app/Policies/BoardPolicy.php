@@ -75,7 +75,7 @@ class BoardPolicy
      * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function showAllCards(User $user,Board $board)
+    public function showAll(User $user,Board $board)
     {
     return $user->company_id===$board->creator->company_id;
     }
@@ -88,6 +88,17 @@ class BoardPolicy
      * @return [type]
      */
     public function addNewCard(User $user,Board $board)
+    {
+    return $user->id===$board->user_id;
+    }
+    /**
+     * determine which user can add new card
+     * @param User $user
+     * @param Board $board
+     * 
+     * @return [type]
+     */
+    public function addNewTag(User $user,Board $board)
     {
     return $user->id===$board->user_id;
     }

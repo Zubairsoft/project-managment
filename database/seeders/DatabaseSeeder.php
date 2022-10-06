@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             BoardListSeeder::class,
             CardSeeder::class,
             MemberSeeder::class,
-            CommentSeeder::class
+            CommentSeeder::class,
+            TagSeeder::class
 
             
 
