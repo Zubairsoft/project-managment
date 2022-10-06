@@ -10,7 +10,7 @@ class BoardList extends Model
     use HasFactory;
 
     protected $fillable = [
-        'list_name',
+        'name',
         'board_id',
 
     ];

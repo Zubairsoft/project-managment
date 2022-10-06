@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\v1\ChangeCardListController;
 use App\Http\Controllers\Api\v1\CommentController;
 use App\Http\Controllers\Api\v1\LocalizationController;
 use App\Http\Controllers\Api\v1\MemberController;
+use App\Http\Controllers\Api\v1\TagController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,6 +75,17 @@ Route::group(['middleware'=>['auth:api','isActive']],function(){
         Route::post('boards/{board}/list/{list}/card/{card}/members',[MemberController::class,'assign'])->name('member.store');
         Route::delete('boards/{board}/list/{list}/card/{card}/members',[MemberController::class,'destroy'])->name('member.delete');
         #######################################################################################################
+        #################### Tag Route #########################################################################
+        Route::post('boards/{board}/list/{list}/card/{card}/tag',[TagController::class,'store'])->name('tag.store');
+        Route::patch('boards/{board}/list/{list}/card/{card}/tag/{tag}',[TagController::class,'update'])->name('tag.update');
+        Route::delete('boards/{board}/list/{list}/card/{card}/tag/{tag}',[TagController::class,'destroy'])->name('tag.delete');
+
+
+
+
+        #######################################################################################################
+
+
 
 
 
@@ -113,7 +125,10 @@ Route::group(['middleware'=>['auth:api','isActive']],function(){
     Route::patch('boards/{board}/list/{list}/card/{card}/attachment',[AttachmentController::class,'update'])->name('attachment.update');
     Route::delete('boards/{board}/list/{list}/card/{card}/attachment/{attachment}',[AttachmentController::class,'destroy'])->name('attachment.delete');
     Route::get('boards/{board}/list/{list}/card/{card}/attachment/{attachment}',[AttachmentController::class,'show'])->name('attachment.delete');
-
+    ############################################ tag route ################################
+    Route::get('boards/{board}/list/{list}/card/{card}/tag',[TagController::class,'index'])->name('tag.index');
+    Route::get('boards/{board}/list/{list}/card/{card}/tag/{tag}',[TagController::class,'show'])->name('tag.show');
+    ############################################################################################
 
 
 

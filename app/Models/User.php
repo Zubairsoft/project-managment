@@ -15,9 +15,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    protected $guard_name ='api';
+    protected $guard_name = 'api';
 
 
     /**
@@ -57,12 +57,12 @@ class User extends Authenticatable
 
     public  function company()
     {
-        return $this->hasOne(Company::class,'owner_id');
+        return $this->hasOne(Company::class, 'owner_id');
     }
 
     public function companyMember()
     {
-        return $this->belongsTo(Company::class,'company_id');
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
     public function boards()
@@ -72,19 +72,24 @@ class User extends Authenticatable
 
     public function cards()
     {
-     return $this->belongsToMany(Card::class,'members','user_id','card_id')->withTimestamps();
+        return $this->belongsToMany(Card::class, 'members', 'user_id', 'card_id')->withTimestamps();
     }
 
     public function comments()
     {
-return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class);
+    }
+
+    public function assignedTags()
+    {
+        return $this->hasMany(Tag::class);
     }
     ######################################################
 
     ################### scope  ###########################
     public function scopeGetEmployees(Builder $query)
     {
-    $query->where('company_id',auth()->user()->company_id)->where('id','<>',auth()->user()->id);
+        $query->where('company_id', auth()->user()->company_id)->where('id', '<>', auth()->user()->id);
     }
 
 
@@ -93,12 +98,12 @@ return $this->hasMany(Comment::class);
 
     public function getActiveStatusAttribute()
     {
-        return $this->is_active==true?__('auth.user.active'):__('auth.user.block');
+        return $this->is_active == true ? __('auth.user.active') : __('auth.user.block');
     }
 
     public function setPasswordAttribute($value)
     {
-     return $this->attributes['password']=bcrypt($value);
+        return $this->attributes['password'] = bcrypt($value);
     }
     ######################################################
 }

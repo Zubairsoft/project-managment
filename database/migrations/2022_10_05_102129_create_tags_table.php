@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('board_lists', function (Blueprint $table) {
+        Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('board_id');
+            $table->string('color');
+            $table->unsignedBigInteger('card_id')->index();
+            $table->unsignedBigInteger('creator_id');
+            $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
+            $table->foreign('creator_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('board_id')->references('id')->on('boards')->onDelete('cascade');
         });
     }
 
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('board_lists');
+        Schema::dropIfExists('tags');
     }
 };

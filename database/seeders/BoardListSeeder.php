@@ -21,7 +21,7 @@ class BoardListSeeder extends Seeder
         Board::all()->each(function(Board $board)use($lists){
           $lists->each(function($list)use($board){
             $board->lists()->create([
-                'list_name'=>$list
+                'name'=>$list
             ]);
           });
         });

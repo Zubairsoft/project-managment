@@ -17,10 +17,10 @@ class CardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    //todo make the authorize | and append attachment at card if exits
+    //todo append attachment at card if exits
     public function index(Board $board,BoardList $list)
     {
-        $this->authorize('showAllCards',$board);
+        $this->authorize('showAll',$board);
         $cards=Card::allCardWithSortWithPriority($list->id)->get();
         return successResponse(CardResource::collection($cards),__('response.success'));
     }

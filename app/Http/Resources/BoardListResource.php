@@ -17,7 +17,7 @@ class BoardListResource extends JsonResource
 return [
 
     'id'  => $this->id,
-    'listName'=> $this->list_name,
+    'listName'=> $this->name,
     'boardId'=> $this->board_id,
 
 ];
