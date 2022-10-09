@@ -108,14 +108,14 @@ class CardController extends Controller
    */
   public function filter(Board $board)
   {
-    $model=Card::with('list')->whereHas('list',function(Builder $query)use($board){
+    $model=Card::whereHas('list',function(Builder $query)use($board){
       $query->where('board_id',$board->id);
     });
    
     
     $filter = QueryBuilder::for($model)
       ->allowedFilters([
-         AllowedFilter::custom('title',new FilterCardByTitle),
+        //  AllowedFilter::custom('title',new FilterCardByTitle),
          AllowedFilter::custom('des',new FilterCardByDescription),
          AllowedFilter::custom('list',new FilterCardByList),
          AllowedFilter::custom('card_priority',new FilterCardByPriority),
@@ -123,7 +123,8 @@ class CardController extends Controller
          AllowedFilter::custom('tag',new FilterCardByTag)
       ])->defaultSort('priority', '-created_at')
       ->allowedSorts('priority', 'created_at')
-      ->get();
+      ->paginate()
+      ->appends(request()->query());
     return successResponse($filter, __('response.success'));
   }
 }
