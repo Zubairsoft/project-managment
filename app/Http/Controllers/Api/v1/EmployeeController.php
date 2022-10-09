@@ -22,8 +22,8 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $pages=$request->page??10;
-        $employees=User::getEmployees()->paginate($pages);
+        $pages=$request->page > User::$limit ?User::$limit:$request->page;
+        $employees=User::getEmployees()->paginate($pages)->appends($request->query());
         return successResponse( UserResource::collection($employees),__('response.success'),200);
 
     }

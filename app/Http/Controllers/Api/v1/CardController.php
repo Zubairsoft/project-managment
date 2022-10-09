@@ -19,8 +19,10 @@ use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Sort\SortCardByGroupingList;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class CardController extends Controller
 {
@@ -30,10 +32,11 @@ class CardController extends Controller
    * @return \Illuminate\Http\Response
    */
   //todo append attachment at card if exits
-  public function index(Board $board, BoardList $list)
+  public function index(Request $request,Board $board, BoardList $list)
   {
     $this->authorize('showAll', $board);
-    $cards = Card::allCardWithSortWithPriority($list->id)->get();
+    $pages=$request->pages > Card::$limit ? Card::$limit:$request->pages ;
+    $cards = Card::allCardWithSortWithPriority($list->id)->paginate($pages)->appends($request->query());
     return successResponse(CardResource::collection($cards), __('response.success'));
   }
 
@@ -106,8 +109,9 @@ class CardController extends Controller
    * 
    * @return [collection]
    */
-  public function filter(Board $board)
+  public function filter(Board $board,Request $request)
   {
+    $pages=$request->pages > Card::$limit?Card::$limit:$request->pages ;
     $model=Card::whereHas('list',function(Builder $query)use($board){
       $query->where('board_id',$board->id);
     });
@@ -115,15 +119,18 @@ class CardController extends Controller
     
     $filter = QueryBuilder::for($model)
       ->allowedFilters([
-        //  AllowedFilter::custom('title',new FilterCardByTitle),
+         AllowedFilter::custom('title',new FilterCardByTitle),
          AllowedFilter::custom('des',new FilterCardByDescription),
          AllowedFilter::custom('list',new FilterCardByList),
          AllowedFilter::custom('card_priority',new FilterCardByPriority),
          AllowedFilter::custom('assigned',new FilterCardByAssigned),
          AllowedFilter::custom('tag',new FilterCardByTag)
       ])->defaultSort('priority', '-created_at')
-      ->allowedSorts('priority', 'created_at')
-      ->paginate()
+      ->allowedSorts([
+        'priority',
+        '-created_at',
+    ])
+      ->paginate($pages)
       ->appends(request()->query());
     return successResponse($filter, __('response.success'));
   }
