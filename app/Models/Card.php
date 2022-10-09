@@ -49,7 +49,10 @@ class Card extends Model implements HasMedia
     #################################################################
 
     ########################### Scope ###############################
-
+    public function scopeCardPriority(Builder $query,$value)
+    {
+    $query->where('priority',$value);
+    }
 
     #################################################################
 
