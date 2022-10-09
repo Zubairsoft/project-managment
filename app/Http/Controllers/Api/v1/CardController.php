@@ -115,7 +115,7 @@ class CardController extends Controller
     
     $filter = QueryBuilder::for($model)
       ->allowedFilters([
-        //  AllowedFilter::custom('title',new FilterCardByTitle),
+         AllowedFilter::custom('title',new FilterCardByTitle),
          AllowedFilter::custom('des',new FilterCardByDescription),
          AllowedFilter::custom('list',new FilterCardByList),
          AllowedFilter::custom('card_priority',new FilterCardByPriority),
