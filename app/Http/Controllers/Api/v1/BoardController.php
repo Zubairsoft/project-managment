@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Board;
 use App\Http\Requests\StoreBoardRequest;
 use App\Http\Requests\UpdateBoardRequest;
+use Illuminate\Http\Request;
 
 class BoardController extends Controller
 {
@@ -16,9 +17,10 @@ class BoardController extends Controller
      */
 
      // 
-    public function index()
+    public function index(Request $request)
     {
-        $boards=Board::authBoards()->get();
+        $pages=$request->pages > Board::$limit?Board::$limit:$request->pages;
+        $boards=Board::authBoards()->paginate($pages)->appends($request->query());
        
        return successResponse($boards,__('response.success'));
 

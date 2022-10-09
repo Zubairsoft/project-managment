@@ -32,6 +32,10 @@ class User extends Authenticatable
         'company_id',
         'is_active'
     ];
+    /**
+     * this static variable for determine the limit of paginate
+     */
+    public static $limit=20;
 
     /**
      * The attributes that should be hidden for serialization.
