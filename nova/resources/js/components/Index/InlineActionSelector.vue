@@ -41,10 +41,17 @@
         :selected-resources="selectedResources"
         :resource-name="resourceName"
         :action="selectedAction"
-        :endpoint="actionsEndpoint"
+        :endpoint="endpoint"
         :errors="errors"
         @confirm="executeAction"
         @close="closeConfirmationModal"
+      />
+
+      <component
+        :is="actionResponseData.modal"
+        @close="closeActionResponseModal"
+        v-if="showActionResponseModal"
+        :data="actionResponseData"
       />
     </portal>
   </span>
@@ -60,6 +67,11 @@ export default {
     resource: {},
     actions: {},
   },
+
+  data: () => ({
+    showActionResponseModal: false,
+    actionResponseData: {},
+  }),
 
   methods: {
     handleSelectionChange(event) {

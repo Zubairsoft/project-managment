@@ -42,8 +42,10 @@ class ActionEvent extends Model
      */
     public function user()
     {
+        $provider = config('auth.guards.'.(config('nova.guard') ?? 'web').'.provider');
+
         return $this->belongsTo(
-            config('auth.providers.'.(config('nova.guard') ?? 'users').'.model'), 'user_id'
+            config('auth.providers.'.$provider.'.model'), 'user_id'
         );
     }
 
@@ -60,7 +62,7 @@ class ActionEvent extends Model
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public static function forResourceCreate($user, $model)
     {
@@ -87,7 +89,7 @@ class ActionEvent extends Model
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public static function forResourceUpdate($user, $model)
     {
@@ -102,7 +104,7 @@ class ActionEvent extends Model
             'model_type' => $model->getMorphClass(),
             'model_id' => $model->getKey(),
             'fields' => '',
-            'original' => array_intersect_key($model->getOriginal(), $model->getDirty()),
+            'original' => array_intersect_key($model->getRawOriginal(), $model->getDirty()),
             'changes' => $model->getDirty(),
             'status' => 'finished',
             'exception' => '',
@@ -115,7 +117,7 @@ class ActionEvent extends Model
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  \Illuminate\Database\Eloquent\Model  $pivot
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public static function forAttachedResource(NovaRequest $request, $parent, $pivot)
     {
@@ -143,7 +145,7 @@ class ActionEvent extends Model
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  \Illuminate\Database\Eloquent\Model  $pivot
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public static function forAttachedResourceUpdate(NovaRequest $request, $parent, $pivot)
     {
@@ -158,7 +160,7 @@ class ActionEvent extends Model
             'model_type' => $pivot->getMorphClass(),
             'model_id' => $pivot->getKey(),
             'fields' => '',
-            'original' => array_intersect_key($pivot->getOriginal(), $pivot->getDirty()),
+            'original' => array_intersect_key($pivot->getRawOriginal(), $pivot->getDirty()),
             'changes' => $pivot->getDirty(),
             'status' => 'finished',
             'exception' => '',

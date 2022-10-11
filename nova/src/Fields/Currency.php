@@ -5,6 +5,7 @@ namespace Laravel\Nova\Fields;
 use Brick\Money\Context;
 use Brick\Money\Context\CustomContext;
 use Brick\Money\Money;
+use NumberFormatter;
 use Symfony\Component\Intl\Currencies;
 
 class Currency extends Number
@@ -78,7 +79,7 @@ class Currency extends Number
         $this->fillUsing(function ($request, $model, $attribute) {
             $value = $request->$attribute;
 
-            if ($this->minorUnits) {
+            if ($this->minorUnits && ! $this->isNullValue($value)) {
                 $model->$attribute = $this->toMoneyInstance($value)->getMinorAmount()->toInt();
             } else {
                 $model->$attribute = $value;
@@ -99,9 +100,8 @@ class Currency extends Number
     /**
      * Convert the value to a Money instance.
      *
-     * @param mixed $value
-     * @param null|string $currency
-     *
+     * @param  mixed  $value
+     * @param  null|string  $currency
      * @return \Brick\Money\Money
      */
     public function toMoneyInstance($value, $currency = null)
@@ -120,14 +120,24 @@ class Currency extends Number
      * @param  mixed  $value
      * @param  null|string  $currency
      * @param  null|string  $locale
-     *
      * @return string
      */
     public function formatMoney($value, $currency = null, $locale = null)
     {
         $money = $this->toMoneyInstance($value, $currency);
 
-        return $money->formatTo($locale ?? $this->locale);
+        if (is_null($this->currencySymbol)) {
+            return $money->formatTo($locale ?? $this->locale);
+        }
+
+        return tap(new NumberFormatter($locale ?? $this->locale, NumberFormatter::CURRENCY), function ($formatter) use ($money) {
+            $scale = $money->getAmount()->getScale();
+
+            $formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, $this->currencySymbol);
+            $formatter->setSymbol(NumberFormatter::INTL_CURRENCY_SYMBOL, $this->currencySymbol);
+            $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $scale);
+            $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $scale);
+        })->format($money->getAmount()->toFloat());
     }
 
     /**
@@ -214,7 +224,7 @@ class Currency extends Number
     /**
      * Set the context used to create the Money instance.
      *
-     * @param Context $context
+     * @param  Context  $context
      * @return $this
      */
     public function context(Context $context)
@@ -227,7 +237,7 @@ class Currency extends Number
     /**
      * Check value for null value.
      *
-     * @param  mixed $value
+     * @param  mixed  $value
      * @return bool
      */
     protected function isNullValue($value)
@@ -258,6 +268,7 @@ class Currency extends Number
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return array_merge(parent::jsonSerialize(), [

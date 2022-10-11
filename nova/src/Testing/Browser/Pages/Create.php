@@ -10,16 +10,19 @@ class Create extends Page
     use HasSearchableRelations;
 
     public $resourceName;
+    public $queryParams;
 
     /**
      * Create a new page instance.
      *
      * @param  string  $resourceName
+     * @param  array  $queryParams
      * @return void
      */
-    public function __construct($resourceName)
+    public function __construct($resourceName, $queryParams = [])
     {
         $this->resourceName = $resourceName;
+        $this->queryParams = $queryParams;
     }
 
     /**
@@ -29,25 +32,44 @@ class Create extends Page
      */
     public function url()
     {
-        return Nova::path().'/resources/'.$this->resourceName.'/new';
+        $url = Nova::path().'/resources/'.$this->resourceName.'/new';
+
+        if ($this->queryParams) {
+            $url .= '?'.http_build_query($this->queryParams);
+        }
+
+        return $url;
     }
 
     /**
      * Run the inline create relation.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @param  string  $uriKey
+     * @param  callable  $fieldCallback
+     * @return void
+     *
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
      */
     public function runInlineCreate(Browser $browser, $uriKey, callable $fieldCallback)
     {
-        $browser->click("@{$uriKey}-inline-create")->pause(500);
+        $browser->whenAvailable("@{$uriKey}-inline-create", function ($browser) use ($fieldCallback) {
+            $browser->click('')
+                ->elsewhere('', function ($browser) use ($fieldCallback) {
+                    $browser->whenAvailable('.modal', function ($browser) use ($fieldCallback) {
+                        $fieldCallback($browser);
 
-        $browser->elsewhere('.modal', function ($browser) use ($fieldCallback) {
-            $fieldCallback($browser);
-
-            $browser->create()->pause(250);
+                        $browser->create()->pause(250);
+                    });
+                });
         });
     }
 
     /**
      * Click the create button.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @return void
      */
     public function create(Browser $browser)
     {
@@ -56,6 +78,9 @@ class Create extends Page
 
     /**
      * Click the create and add another button.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @return void
      */
     public function createAndAddAnother(Browser $browser)
     {
@@ -65,7 +90,7 @@ class Create extends Page
     /**
      * Assert that the browser is on the page.
      *
-     * @param  Browser  $browser
+     * @param  \Laravel\Dusk\Browser  $browser
      * @return void
      */
     public function assert(Browser $browser)
@@ -75,6 +100,10 @@ class Create extends Page
 
     /**
      * Assert that there are no search results.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @param  string  $resourceName
+     * @return void
      */
     public function assertNoRelationSearchResults(Browser $browser, $resourceName)
     {

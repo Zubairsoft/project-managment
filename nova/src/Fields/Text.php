@@ -63,11 +63,15 @@ class Text extends Field
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $request = app(NovaRequest::class);
 
-        if ($request->isCreateOrAttachRequest() || $request->isUpdateOrUpdateAttachedRequest()) {
+        if ($request->isCreateOrAttachRequest()
+            || $request->isUpdateOrUpdateAttachedRequest()
+            || $request->isActionRequest() === true
+        ) {
             return array_merge(parent::jsonSerialize(), [
                 'suggestions' => $this->resolveSuggestions($request),
             ]);
