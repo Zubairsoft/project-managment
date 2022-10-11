@@ -11,18 +11,21 @@ class Update extends Page
 
     public $resourceName;
     public $resourceId;
+    public $queryParams;
 
     /**
      * Create a new page instance.
      *
      * @param  string  $resourceName
      * @param  int  $resourceId
+     * @param  array  $queryParams
      * @return void
      */
-    public function __construct($resourceName, $resourceId)
+    public function __construct($resourceName, $resourceId, $queryParams = [])
     {
-        $this->resourceId = $resourceId;
         $this->resourceName = $resourceName;
+        $this->resourceId = $resourceId;
+        $this->queryParams = $queryParams;
     }
 
     /**
@@ -32,43 +35,73 @@ class Update extends Page
      */
     public function url()
     {
-        return Nova::path().'/resources/'.$this->resourceName.'/'.$this->resourceId.'/edit';
+        $url = Nova::path().'/resources/'.$this->resourceName.'/'.$this->resourceId.'/edit';
+
+        if ($this->queryParams) {
+            $url .= '?'.http_build_query($this->queryParams);
+        }
+
+        return $url;
     }
 
     /**
      * Run the inline create relation.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @param  string  $uriKey
+     * @param  callable  $fieldCallback
+     * @return void
+     *
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
      */
     public function runInlineCreate(Browser $browser, $uriKey, callable $fieldCallback)
     {
-        $browser->click("@{$uriKey}-inline-create")->pause(500);
+        $browser->whenAvailable("@{$uriKey}-inline-create", function ($browser) use ($fieldCallback) {
+            $browser->click('')
+                ->elsewhere('', function ($browser) use ($fieldCallback) {
+                    $browser->whenAvailable('.modal', function ($browser) use ($fieldCallback) {
+                        $fieldCallback($browser);
 
-        $browser->elsewhere('.modal', function ($browser) use ($fieldCallback) {
-            $fieldCallback($browser);
-
-            $browser->create()->pause(250);
+                        $browser->create()->pause(250);
+                    });
+                });
         });
     }
 
     /**
      * Click the update button.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @return void
+     *
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
      */
     public function update(Browser $browser)
     {
-        $browser->click('@update-button')->pause(500);
+        $browser->waitFor('@update-button')
+                ->click('@update-button')
+                ->pause(500);
     }
 
     /**
      * Click the update and continue editing button.
+     *
+     * @param  \Laravel\Dusk\Browser  $browser
+     * @return void
+     *
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
      */
     public function updateAndContinueEditing(Browser $browser)
     {
-        $browser->click('@update-and-continue-editing-button')->pause(500);
+        $browser->waitFor('@update-and-continue-editing-button')
+                ->click('@update-and-continue-editing-button')
+                ->pause(500);
     }
 
     /**
      * Assert that the browser is on the page.
      *
-     * @param  Browser  $browser
+     * @param  \Laravel\Dusk\Browser  $browser
      * @return void
      */
     public function assert(Browser $browser)

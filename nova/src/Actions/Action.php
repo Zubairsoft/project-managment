@@ -4,7 +4,9 @@ namespace Laravel\Nova\Actions;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 use JsonSerializable;
 use Laravel\Nova\AuthorizedToSee;
 use Laravel\Nova\Exceptions\MissingActionHandlerException;
@@ -19,7 +21,11 @@ use ReflectionClass;
 
 class Action implements JsonSerializable
 {
-    use Metable, AuthorizedToSee, ProxiesCanSeeToGate, Makeable;
+    use AuthorizedToSee,
+        Macroable,
+        Makeable,
+        Metable,
+        ProxiesCanSeeToGate;
 
     /**
      * The displayable name of the action.
@@ -236,10 +242,23 @@ class Action implements JsonSerializable
     }
 
     /**
+     * Return an action modal response from the action.
+     *
+     * @param  string  $modal
+     * @param  array  $data
+     * @return array
+     */
+    public static function modal($modal, $data)
+    {
+        return array_merge(['modal' => $modal], $data);
+    }
+
+    /**
      * Execute the action for the given request.
      *
      * @param  \Laravel\Nova\Http\Requests\ActionRequest  $request
      * @return mixed
+     *
      * @throws MissingActionHandlerException
      */
     public function handleRequest(ActionRequest $request)
@@ -290,12 +309,23 @@ class Action implements JsonSerializable
      *
      * @param  \Laravel\Nova\Fields\ActionFields  $fields
      * @param  array  $results
-     *
      * @return mixed
      */
     public function handleResult(ActionFields $fields, $results)
     {
         return count($results) ? end($results) : null;
+    }
+
+    /**
+     * Handle any post-validation processing.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @return void
+     */
+    protected function afterValidation(NovaRequest $request, $validator)
+    {
+        //
     }
 
     /**
@@ -332,10 +362,40 @@ class Action implements JsonSerializable
     }
 
     /**
+     * Validate the given request.
+     *
+     * @param  \Laravel\Nova\Http\Requests\ActionRequest  $request
+     * @return array
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function validateFields(ActionRequest $request)
+    {
+        $fields = collect($this->fields());
+
+        return Validator::make(
+            $request->all(),
+            $fields->mapWithKeys(function ($field) use ($request) {
+                return $field->getCreationRules($request);
+            })->all(),
+            [],
+            $fields->reject(function ($field) {
+                return empty($field->name);
+            })->mapWithKeys(function ($field) {
+                return [$field->attribute => $field->name];
+            })->all()
+        )->after(function ($validator) use ($request) {
+            $this->afterValidation($request, $validator);
+        })->validate();
+    }
+
+    /**
      * Indicate that this action can be run for the entire resource at once.
      *
      * @param  bool  $value
      * @return $this
+     *
+     * @deprecated
      */
     public function availableForEntireResource($value = true)
     {
@@ -673,6 +733,7 @@ class Action implements JsonSerializable
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $request = app(NovaRequest::class);
@@ -700,7 +761,6 @@ class Action implements JsonSerializable
      * Prepare the instance for serialization.
      *
      * @return array
-     * @throws \ReflectionException
      */
     public function __sleep()
     {

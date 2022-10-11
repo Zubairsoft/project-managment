@@ -197,6 +197,7 @@ export default {
     resourceId: function (newResourceId, oldResourceId) {
       if (newResourceId != oldResourceId) {
         this.initializeComponent()
+        this.fetchCards()
       }
     },
   },
@@ -208,14 +209,14 @@ export default {
     if (Nova.missingResource(this.resourceName))
       return this.$router.push({ name: '404' })
 
-    document.addEventListener('keydown', this.handleKeydown)
+    Nova.addShortcut('e', this.handleKeydown)
   },
 
   /**
-   * Unbind the keydown even listener when the component is destroyed
+   * Unbind the keydown even listener when the before component is destroyed
    */
-  destroyed() {
-    document.removeEventListener('keydown', this.handleKeydown)
+  beforeDestroy() {
+    Nova.disableShortcut('e')
   },
 
   /**
@@ -232,11 +233,6 @@ export default {
     handleKeydown(e) {
       if (
         this.resource.authorizedToUpdate &&
-        !e.ctrlKey &&
-        !e.altKey &&
-        !e.metaKey &&
-        !e.shiftKey &&
-        e.keyCode == 69 &&
         e.target.tagName != 'INPUT' &&
         e.target.tagName != 'TEXTAREA' &&
         e.target.contentEditable != 'true'
@@ -312,10 +308,11 @@ export default {
             resourceId: this.resourceId,
             editing: true,
             editMode: 'create',
+            display: 'detail',
           },
         })
         .then(response => {
-          this.actions = _.filter(response.data.actions, a => a.showOnDetail)
+          this.actions = response.data.actions
         })
     },
 
@@ -363,15 +360,22 @@ export default {
         )
 
         if (response && response.data && response.data.redirect) {
-          this.$router.push({ path: response.data.redirect })
+          this.$router.push({ path: response.data.redirect }, () => {
+            window.scrollTo(0, 0)
+          })
           return
         }
 
         if (!this.resource.softDeletes) {
-          this.$router.push({
-            name: 'index',
-            params: { resourceName: this.resourceName },
-          })
+          this.$router.push(
+            {
+              name: 'index',
+              params: { resourceName: this.resourceName },
+            },
+            () => {
+              window.scrollTo(0, 0)
+            }
+          )
           return
         }
 

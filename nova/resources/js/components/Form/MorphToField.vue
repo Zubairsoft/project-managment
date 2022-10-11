@@ -103,7 +103,7 @@
           </search-input>
 
           <select-control
-            v-if="!isSearchable || isLocked"
+            v-if="!isSearchable || isLocked || isReadonly"
             class="form-control form-select w-full"
             :class="{ 'border-danger': hasError }"
             :dusk="`${field.attribute}-select`"
@@ -197,9 +197,7 @@ export default {
       this.initializingWithExistingResource = true
       this.resourceType = this.field.morphToType
       this.selectedResourceId = this.field.morphToId
-    }
-
-    if (this.creatingViaRelatedResource) {
+    } else if (this.creatingViaRelatedResource) {
       this.initializingWithExistingResource = true
       this.resourceType = this.viaResource
       this.selectedResourceId = this.viaResourceId
@@ -321,11 +319,13 @@ export default {
     },
 
     openRelationModal() {
+      Nova.$emit('create-relation-modal-opened')
       this.relationModalOpen = true
     },
 
     closeRelationModal() {
       this.relationModalOpen = false
+      Nova.$emit('create-relation-modal-closed')
     },
 
     handleSetResource({ id }) {
@@ -377,7 +377,7 @@ export default {
 
     shouldLoadFirstResource() {
       return (
-        this.isSearchable &&
+        (this.isSearchable || this.creatingViaRelatedResource) &&
         this.shouldSelectInitialResource &&
         this.initializingWithExistingResource
       )
@@ -397,6 +397,11 @@ export default {
           viaResource: this.viaResource,
           viaResourceId: this.viaResourceId,
           viaRelationship: this.viaRelationship,
+          editing: true,
+          editMode:
+            _.isNil(this.resourceId) || this.resourceId === ''
+              ? 'create'
+              : 'update',
         },
       }
     },
@@ -432,7 +437,7 @@ export default {
      * Determine if the field is set to readonly.
      */
     isReadonly() {
-      return (
+      return Boolean(
         this.field.readonly || _.get(this.field, 'extraAttributes.readonly')
       )
     },

@@ -53,7 +53,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
     /**
      * The underlying model resource instance.
      *
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \Illuminate\Database\Eloquent\Model|null
      */
     public $resource;
 
@@ -107,7 +107,16 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
     public static $globalSearchResults = 5;
 
     /**
+     * The number of results to display when searching relatable resource without Scout.
+     *
+     * @var int|null
+     */
+    public static $relatableSearchResults = null;
+
+    /**
      * The number of results to display when searching the resource using Scout.
+     *
+     * @var int
      */
     public static $scoutSearchResults = 200;
 
@@ -184,7 +193,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
     /**
      * Indicates whether to show the polling toggle button inside Nova.
      *
-     * @var int
+     * @var bool
      */
     public static $showPollingToggle = false;
 
@@ -198,7 +207,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
     /**
      * Create a new resource instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $resource
+     * @param  \Illuminate\Database\Eloquent\Model|null  $resource
      * @return void
      */
     public function __construct($resource)
@@ -274,8 +283,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
     /**
      * Determine whether the global search links will take the user to the detail page.
      *
-     * @param \Laravel\Nova\Http\Requests\NovaRequest $request
-     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return string
      */
     public function globalSearchLink(NovaRequest $request)
@@ -344,7 +352,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
      */
     public function title()
     {
-        return $this->{static::$title};
+        return (string) data_get($this, static::$title);
     }
 
     /**
@@ -424,7 +432,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
      * Indicates whether Nova should check for modifications between viewing and updating a resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return  bool
+     * @return bool
      */
     public static function trafficCop(Request $request)
     {
@@ -434,8 +442,8 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
     /**
      * Indicates whether Nova should prevent the user from leaving an unsaved form, losing their data.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return  bool
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
      */
     public static function preventFormAbandonment(Request $request)
     {
@@ -469,7 +477,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
      * Prepare the resource for JSON serialization.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @param \Laravel\Nova\Resource $resource
+     * @param  \Laravel\Nova\Resource  $resource
      * @return array
      */
     public function serializeForDetail(NovaRequest $request, Resource $resource)
@@ -527,8 +535,7 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
      */
     public function isSoftDeleted()
     {
-        return static::softDeletes() &&
-               ! is_null($this->resource->{$this->resource->getDeletedAtColumn()});
+        return static::softDeletes() && $this->resource->trashed();
     }
 
     /**
@@ -536,9 +543,10 @@ abstract class Resource implements ArrayAccess, JsonSerializable, UrlRoutable
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        $this->serializeWithId($this->resolveFields(
+        return $this->serializeWithId($this->resolveFields(
             resolve(NovaRequest::class)
         ));
     }

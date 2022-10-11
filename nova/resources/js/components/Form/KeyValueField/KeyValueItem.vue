@@ -45,6 +45,7 @@
     >
       <button
         @click="$emit('remove-row', item.id)"
+        :dusk="`remove-key-value-${index}`"
         type="button"
         tabindex="-1"
         class="flex appearance-none cursor-pointer text-70 hover:text-primary active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"

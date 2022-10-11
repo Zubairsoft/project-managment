@@ -95,15 +95,29 @@ trait PerformsQueries
      */
     protected static function initializeQueryUsingScout(NovaRequest $request, $query, $search, $withTrashed)
     {
-        $keys = tap(static::applySoftDeleteConstraint(
-            static::newModel()->search($search), $withTrashed
-        ), function ($scoutBuilder) use ($request) {
-            static::scoutQuery($request, $scoutBuilder);
-        })->take(static::$scoutSearchResults)->get()->map->getKey();
+        $keys = static::buildIndexQueryUsingScout($request, $search, $withTrashed)->get()->map->getKey();
 
         return static::applySoftDeleteConstraint(
             $query->whereIn(static::newModel()->getQualifiedKeyName(), $keys->all()), $withTrashed
         );
+    }
+
+    /**
+     * Build an "index" result for the given resource using Scout.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  string|null  $search
+     * @param  string  $withTrashed
+     * @return \Laravel\Scout\Builder
+     */
+    public static function buildIndexQueryUsingScout(NovaRequest $request, $search = null,
+                                          $withTrashed = TrashedStatus::DEFAULT)
+    {
+        return tap(static::applySoftDeleteConstraint(
+            static::newModel()->search($search), $withTrashed
+        ), function ($scoutBuilder) use ($request) {
+            static::scoutQuery($request, $scoutBuilder);
+        })->take(static::$scoutSearchResults);
     }
 
     /**
@@ -147,7 +161,7 @@ trait PerformsQueries
         $orderings = array_filter($orderings);
 
         if (empty($orderings)) {
-            return empty($query->getQuery()->orders)
+            return empty($query->getQuery()->orders) && ! static::usesScout()
                         ? $query->latest($query->getModel()->getQualifiedKeyName())
                         : $query;
         }

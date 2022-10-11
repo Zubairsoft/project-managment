@@ -275,3 +275,13 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  metaInfo() {
+    return {
+      title: 'Forbidden',
+    }
+  },
+}
+</script>

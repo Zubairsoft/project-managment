@@ -2,6 +2,7 @@
 
 namespace Laravel\Nova\Http\Controllers;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Actions\Actionable;
@@ -24,7 +25,9 @@ class ResourceDestroyController extends Controller
             $models->each(function ($model) use ($request) {
                 $this->deleteFields($request, $model);
 
-                if (in_array(Actionable::class, class_uses_recursive($model))) {
+                $uses = class_uses_recursive($model);
+
+                if (in_array(Actionable::class, $uses) && ! in_array(SoftDeletes::class, $uses)) {
                     $model->actions()->delete();
                 }
 

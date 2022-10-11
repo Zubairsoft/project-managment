@@ -22,7 +22,7 @@ class LoginController extends Controller
     |
     */
 
-    use ValidatesRequests,AuthenticatesUsers{   logout as doLogout;}
+    use AuthenticatesUsers, ValidatesRequests;
 
     /**
      * Create a new controller instance.
@@ -50,20 +50,13 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-//    public function logout(Request $request)
-//    {
-//        $this->guard()->logout();
-//
-//        $request->session()->invalidate();
-//
-//        return redirect($this->redirectPath());
-//    }
-
     public function logout(Request $request)
     {
-        $this->doLogout($request);
+        $this->guard()->logout();
 
-        return redirect()->route('nova.login');
+        $request->session()->invalidate();
+
+        return redirect($this->redirectPath());
     }
 
     /**
@@ -84,17 +77,5 @@ class LoginController extends Controller
     protected function guard()
     {
         return Auth::guard(config('nova.guard'));
-    }
-
-    protected function sendLoginResponse(Request $request)
-    {
-        $request->session()->regenerate();
-
-        $this->clearLoginAttempts($request);
-
-        $redirectPath = $this->redirectPath();
-        redirect()->setIntendedUrl($redirectPath);
-
-        return redirect()->intended($redirectPath);
     }
 }

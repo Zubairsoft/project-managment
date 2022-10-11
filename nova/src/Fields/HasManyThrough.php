@@ -2,7 +2,6 @@
 
 namespace Laravel\Nova\Fields;
 
-use Illuminate\Support\Str;
 use Laravel\Nova\Contracts\ListableField;
 use Laravel\Nova\Contracts\RelatableField;
 
@@ -32,12 +31,8 @@ class HasManyThrough extends HasMany implements ListableField, RelatableField
      */
     public function __construct($name, $attribute = null, $resource = null)
     {
-        parent::__construct($name, $attribute);
+        parent::__construct($name, $attribute, $resource);
 
-        $resource = $resource ?? ResourceRelationshipGuesser::guessResource($name);
-
-        $this->resourceClass = $resource;
-        $this->resourceName = $resource::uriKey();
         $this->hasManyThroughRelationship = $this->attribute;
     }
 
@@ -46,6 +41,7 @@ class HasManyThrough extends HasMany implements ListableField, RelatableField
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return array_merge([
@@ -53,7 +49,7 @@ class HasManyThrough extends HasMany implements ListableField, RelatableField
             'listable' => true,
             'perPage'=> $this->resourceClass::$perPageViaRelationship,
             'resourceName' => $this->resourceName,
-            'singularLabel' => $this->singularLabel ?? Str::singular($this->name),
+            'singularLabel' => $this->singularLabel ?? $this->resourceClass::singularLabel(),
         ], parent::jsonSerialize());
     }
 }

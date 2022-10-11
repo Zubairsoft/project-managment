@@ -156,34 +156,35 @@ export default {
 
       this.selectedResourceId = this.field.value
 
-      // If a user is editing an existing resource with this relation
-      // we'll have a belongsToId on the field, and we should prefill
-      // that resource in this field
       if (this.editingExistingResource) {
+        // If a user is editing an existing resource with this relation
+        // we'll have a belongsToId on the field, and we should prefill
+        // that resource in this field
         this.initializingWithExistingResource = true
         this.selectedResourceId = this.field.belongsToId
-      }
-
-      // If the user is creating this resource via a related resource's index
-      // page we'll have a viaResource and viaResourceId in the params and
-      // should prefill the resource in this field with that information
-      if (this.creatingViaRelatedResource) {
+      } else if (this.creatingViaRelatedResource) {
+        // If the user is creating this resource via a related resource's index
+        // page we'll have a viaResource and viaResourceId in the params and
+        // should prefill the resource in this field with that information
         this.initializingWithExistingResource = true
         this.selectedResourceId = this.viaResourceId
       }
 
-      if (this.shouldSelectInitialResource && !this.isSearchable) {
-        // If we should select the initial resource but the field is not
-        // searchable we should load all of the available resources into the
-        // field first and select the initial option.
-        this.initializingWithExistingResource = false
-        this.getAvailableResources().then(() => this.selectInitialResource())
-      } else if (this.shouldSelectInitialResource && this.isSearchable) {
-        // If we should select the initial resource and the field is
-        // searchable, we won't load all the resources but we will select
-        // the initial option.
-        this.getAvailableResources().then(() => this.selectInitialResource())
-      } else if (!this.shouldSelectInitialResource && !this.isSearchable) {
+      if (this.shouldSelectInitialResource) {
+        if (this.isSearchable || this.creatingViaRelatedResource) {
+          // If we should select the initial resource and the field is
+          // searchable, we won't load all the resources but we will select
+          // the initial option.
+          this.getAvailableResources().then(() => this.selectInitialResource())
+        } else {
+          // If we should select the initial resource but the field is not
+          // searchable we should load all of the available resources into the
+          // field first and select the initial option.
+          this.initializingWithExistingResource = false
+
+          this.getAvailableResources().then(() => this.selectInitialResource())
+        }
+      } else if (!this.isSearchable) {
         // If we don't need to select an initial resource because the user
         // came to create a resource directly and there's no parent resource,
         // and the field is searchable we'll just load all of the resources.
@@ -234,6 +235,17 @@ export default {
             this.withTrashed = withTrashed
           }
 
+          if (this.creatingViaRelatedResource) {
+            let selectedResource = _.find(
+              resources,
+              r => r.value == this.selectedResourceId
+            )
+
+            if (_.isNil(selectedResource)) {
+              return this.$router.push({ name: '404' })
+            }
+          }
+
           // Turn off initializing the existing resource after the first time
           this.initializingWithExistingResource = false
           this.availableResources = resources
@@ -282,16 +294,19 @@ export default {
     },
 
     openRelationModal() {
+      Nova.$emit('create-relation-modal-opened')
       this.relationModalOpen = true
     },
 
     closeRelationModal() {
       this.relationModalOpen = false
+      Nova.$emit('create-relation-modal-closed')
     },
 
     handleSetResource({ id }) {
       this.closeRelationModal()
       this.selectedResourceId = id
+      this.initializingWithExistingResource = true
       this.getAvailableResources().then(() => this.selectInitialResource())
     },
   },
@@ -308,10 +323,10 @@ export default {
      * Determine if we are creating a new resource via a parent relation
      */
     creatingViaRelatedResource() {
-      return (
+      return Boolean(
         this.viaResource == this.field.resourceName &&
-        this.field.reverse &&
-        this.viaResourceId
+          this.field.reverse &&
+          this.viaResourceId
       )
     },
 
@@ -330,7 +345,7 @@ export default {
      * Determine if the related resources is searchable
      */
     isSearchable() {
-      return this.field.searchable
+      return Boolean(this.field.searchable)
     },
 
     /**
@@ -347,16 +362,23 @@ export default {
           viaResource: this.viaResource,
           viaResourceId: this.viaResourceId,
           viaRelationship: this.viaRelationship,
+          editing: true,
+          editMode:
+            _.isNil(this.resourceId) || this.resourceId === ''
+              ? 'create'
+              : 'update',
         },
       }
     },
 
     isLocked() {
-      return this.viaResource == this.field.resourceName && this.field.reverse
+      return Boolean(
+        this.viaResource == this.field.resourceName && this.field.reverse
+      )
     },
 
     isReadonly() {
-      return (
+      return Boolean(
         this.field.readonly || _.get(this.field, 'extraAttributes.readonly')
       )
     },
