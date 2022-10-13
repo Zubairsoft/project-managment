@@ -44,6 +44,14 @@ class AuthServiceProvider extends ServiceProvider
             if ($user->hasRole('admin')) {
                 return true;
             }
+        
+        });
+
+        Gate::define('viewNova',function(User $user ){
+            if ($user->hasRole('admin')) {
+                return true;
+            }
+
         });
  
 

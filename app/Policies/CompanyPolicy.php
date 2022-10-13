@@ -25,6 +25,14 @@ class CompanyPolicy
         return $user->id===$company->owner_id;
     }
 
+    public function viewAny(User $user)
+    {
+        return false;
+   }
+
+   public function viewCompanyCard(User $user){
+    return $user->hasRole('admin');
+   }
    
 
 }

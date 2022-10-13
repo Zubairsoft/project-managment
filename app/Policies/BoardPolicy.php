@@ -157,7 +157,20 @@ class BoardPolicy
         return $user->id===$board->user_id;
 
     }
+    public function create(User $user){
+        return true;
+    }
 
+    public function view(User $user,Board $board)
+    {
+return $user->id===$board->user_id;
+    }
+
+    public function showTotalCard(){
+    return false;
+    }
+
+  
   
 
 }
