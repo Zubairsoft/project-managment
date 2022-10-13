@@ -2,38 +2,30 @@
 
 namespace App\Nova;
 
-use App\Models\Comment;
-use App\Models\Company as ModelsCompany;
-use App\Nova\Metrics\AllCompany;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Company extends Resource
+class BoardList extends Resource
 {
+    public static $preventFormAbandonment = true;// set the important fill form before leaving
+
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Company::class;
+    public static $model = \App\Models\BoardList::class;
 
-    public static $polling = false;
-  //public static  $pollingInterval = 5;
-   public static $showPollingToggle = false; //  this will show toggle bottom for fetching data 
-    public static $preventFormAbandonment = true;// set the important fill form before leaving
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'name';
-    public static $with=['owner','employees'];
-
 
     /**
      * The columns that should be searched.
@@ -43,6 +35,8 @@ class Company extends Resource
     public static $search = [
         'id','name'
     ];
+
+    public static $with=['board'];
 
     /**
      * Get the fields displayed by the resource.
@@ -54,9 +48,9 @@ class Company extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('name')->sortable(),
-            BelongsTo::make('Owner','owner','App\Nova\User'),
-            HasMany::make('Employees','employees','App\Nova\User')
+            Text::make('name'),
+            BelongsTo::make('Board','board','App\Nova\Board'),
+            HasMany::make('Cards','cards','App\Nova\Card')
         ];
     }
 
@@ -68,9 +62,7 @@ class Company extends Resource
      */
     public function cards(Request $request)
     {
-        return [
-            (new AllCompany)->canSeeWhen('viewCompanyCard',$this),
-        ];
+        return [];
     }
 
     /**
@@ -111,6 +103,10 @@ class Company extends Resource
         if (auth()->user()->hasRole('admin')) {
             return $query;
         }
-        return $query->where('owner_id',auth()->user()->id);
+        return $query->whereHas('board',function($query){
+            $query->where('user_id',auth()->user()->id);
+        });
     }
+
+    
 }

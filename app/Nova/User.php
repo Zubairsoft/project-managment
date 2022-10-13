@@ -2,7 +2,8 @@
 
 namespace App\Nova;
 
-use App\Models\User as ModelsUser;
+use App\Nova\Lenses\MostUsersHaveBoard;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use App\Nova\Metrics\TotalEmployee;
 use App\Nova\Metrics\User\NewUsers;
 use App\Nova\Metrics\User\UsersPerDay;
@@ -33,14 +34,14 @@ class User extends Resource
      */
     public static $title = 'name';
     // public static $tableStyle = 'tight'; // for change table style for resource
-    public static $perPageOptions = [15, 25, 50];// for customize the pagination in the resource
+    public static $perPageOptions = [15, 25, 50]; // for customize the pagination in the resource
 
     /**
- * The debounce amount to use when searching this resource.
- *
- * @var float
- */
-public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching in the resource
+     * The debounce amount to use when searching this resource.
+     *
+     * @var float
+     */
+    public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching in the resource
 
 
     /**
@@ -63,7 +64,7 @@ public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching i
         return [
             ID::make()->sortable(),
 
-            Gravatar::make()->maxWidth(50)->squared(),// Gravatar doesn't associate with any model
+            Gravatar::make()->maxWidth(50)->squared(), // Gravatar doesn't associate with any model
 
             Text::make('Name')
                 ->sortable()
@@ -79,20 +80,20 @@ public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching i
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
-            
+
             // Boolean::make('status','is_active'),
-            Badge::make('status','activeStatus')->map([
+            Badge::make('status', 'activeStatus')->map([
                 __('auth.user.block') => 'danger',
-                __('auth.user.active')=> 'success',
+                __('auth.user.active') => 'success',
             ]),
 
             Boolean::make('is_active')
-            ->onlyOnForms(),
-            Hidden::make('company_id')->default(function(){
+                ->onlyOnForms(),
+            Hidden::make('company_id')->default(function () {
                 return auth()->user()->company_id;
             }),
-            HasMany::make('Boards','boards','App\Nova\Board')
-           
+            HasMany::make('Boards', 'boards', 'App\Nova\Board')
+
         ];
     }
 
@@ -107,10 +108,10 @@ public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching i
         return [
             // new NewUsers(),
             // new UsersPerDay(),
-            (new NewUsers)->width('1/3')->canSeeWhen('viewUsersCard',$this),
-            (new UsersPerDay)->width('full')->canSeeWhen('viewUsersCard',$this), 
-            new TotalEmployee()    
-          ];
+            (new NewUsers)->width('1/3')->canSeeWhen('viewUsersCard', $this),
+            (new UsersPerDay)->width('full')->canSeeWhen('viewUsersCard', $this),
+            new TotalEmployee()
+        ];
     }
 
     /**
@@ -132,7 +133,11 @@ public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching i
      */
     public function lenses(Request $request)
     {
-        return [];
+        return [
+            (new MostUsersHaveBoard)->canSee(function(){
+                return auth()->user()->hasRole('admin');
+            })
+        ];
     }
 
     /**
@@ -145,4 +150,14 @@ public static $debounce = 0.5; // 0.5 seconds it will take 0.5s when searching i
     {
         return [];
     }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (auth()->user()->hasRole('admin')) {
+            return $query;
+        }
+        return $query->where('company_id',auth()->user()->company_id);
+    }
+
+    
 }

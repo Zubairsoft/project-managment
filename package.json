@@ -2,7 +2,9 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "build-TotalBoardList": "cd nova-components/TotalBoardList && npm run dev",
+        "build-TotalBoardList-prod": "cd nova-components/TotalBoardList && npm run prod"
     },
     "devDependencies": {
         "axios": "^0.27",

@@ -2,9 +2,13 @@
 
 namespace App\Nova;
 
+use App\Models\Board as ModelsBoard;
 use App\Nova\Metrics\AllCompanyBoard;
+use App\Nova\Metrics\BoardListsTotal;
+use App\Nova\Metrics\oardListsTotal;
 use App\Nova\Metrics\TotalBoard;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -20,7 +24,7 @@ class Board extends Resource
     public static $model = \App\Models\Board::class;
 
     // public static $group = 'Admin';  // this static property for make group for board with name= Admin in sidebar;
-    // public static $with = ['user'];  // this static property for edger loading with user ;
+   //  public static $with = ['lists'];  // this static property for edger loading with user ;
     // public static $polling=true;// this will automatically fetch data when the model updated --real time
    // public static $pollingInterval = 5; //property on your resource class with the number of seconds Nova should wait before fetching new resource records:
     //public static $showPollingToggle = true; //  this will show toggle bottom for fetching data 
@@ -31,7 +35,7 @@ class Board extends Resource
      *
      * @var string
      */
-    public static $title = 'Boards';
+    public static $title = 'title';
 
     /**
      * The columns that should be searched.
@@ -51,8 +55,10 @@ class Board extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make(__('ID'), 'id')->sortable()->canSeeWhen('show',$this),
-            Text::make('title','title')->sortable()->canSeeWhen('show',$this),
+            ID::make(__('ID'), 'id')->sortable(),
+            Text::make('title','title')->sortable(),
+            HasMany::make('lists','lists','App\Nova\BoardList')
+            
             // Hidden::make('User', 'user_id')->default(function () {
             //     return auth()->user()->id;
             // }),
@@ -71,8 +77,8 @@ class Board extends Resource
     {
         return [
             (new TotalBoard)->canSeeWhen('showTotalCard',$this),
-            new AllCompanyBoard(),
-
+            new AllCompanyBoard,
+            (new BoardListsTotal())->onlyOnDetail()
         ];
     }
 
@@ -107,5 +113,12 @@ class Board extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (auth()->user()->hasRole('admin')) {
+            return $query;
+        }
+        return $query->where('user_id',auth()->user()->id);
     }
 }

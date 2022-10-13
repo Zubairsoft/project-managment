@@ -170,6 +170,11 @@ return $user->id===$board->user_id;
     return false;
     }
 
+    public function delete(User $user,Board $board)
+    {
+        return $user->id===$board->user_id;
+    }
+
   
   
 

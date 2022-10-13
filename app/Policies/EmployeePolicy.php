@@ -64,4 +64,8 @@ class EmployeePolicy
     public function view(User $user,User $model){
       return $user->company_id===$model->company_id;
     }
+
+    public function delete(User $user,User $model){
+        return $user->company_id===$model->company_id;
+    }
 }
