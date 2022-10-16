@@ -57,15 +57,27 @@ class EmployeePolicy
         return $user->hasRole('admin');
     }
 
-    public function create(User $user){
+    public function create(User $user)
+    {
         return true;
     }
 
-    public function view(User $user,User $model){
-      return $user->company_id===$model->company_id;
+    public function view(User $user, User $model)
+    {
+        return $user->company_id === $model->company_id;
     }
 
-    public function delete(User $user,User $model){
-        return $user->company_id===$model->company_id;
+    public function delete(User $user, User $model)
+    {
+        return $user->company_id === $model->company_id;
+    }
+
+    /**
+     * determine if the user can make filter
+     * @return [boolean]
+     */
+    public function filterAllow()
+    {
+        return false;
     }
 }

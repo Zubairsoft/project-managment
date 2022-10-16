@@ -2,6 +2,9 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\User\CompanyEmployee;
+use App\Nova\Filters\User\CompanyOwner;
+use App\Nova\Filters\User\UserActive;
 use App\Nova\Lenses\MostUsersHaveBoard;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use App\Nova\Metrics\TotalEmployee;
@@ -122,7 +125,11 @@ class User extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new UserActive,
+            (new CompanyEmployee)->canSeeWhen('filterAllow',$this),
+            (new CompanyOwner)->canSeeWhen('filterAllow',$this)
+        ];
     }
 
     /**

@@ -4,8 +4,11 @@ namespace App\Nova;
 
 use App\Models\Comment;
 use App\Models\Company as ModelsCompany;
+use App\Nova\Actions\Company\ToggleStatus;
+use App\Nova\Filters\Company\Status;
 use App\Nova\Metrics\AllCompany;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
@@ -56,7 +59,11 @@ class Company extends Resource
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('name')->sortable(),
             BelongsTo::make('Owner','owner','App\Nova\User'),
-            HasMany::make('Employees','employees','App\Nova\User')
+            HasMany::make('Employees','employees','App\Nova\User'),
+            Badge::make('status','companyStatus')->map([
+                __('auth.user.active')=>'success',
+                __('auth.user.block')=>'danger'
+            ])
         ];
     }
 
@@ -70,6 +77,7 @@ class Company extends Resource
     {
         return [
             (new AllCompany)->canSeeWhen('viewCompanyCard',$this),
+
         ];
     }
 
@@ -81,7 +89,9 @@ class Company extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            (new Status)
+        ];
     }
 
     /**
@@ -103,7 +113,9 @@ class Company extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            (new ToggleStatus)
+        ];
     }
 
     public static function indexQuery(NovaRequest $request, $query)

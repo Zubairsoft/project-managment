@@ -2,6 +2,12 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\Card\AssignedUsers;
+use App\Nova\Filters\Card\Board;
+use App\Nova\Filters\Card\CardList;
+use App\Nova\Filters\Card\Priority;
+use App\Nova\Filters\Card\Tag;
+use App\Nova\Metrics\TotalCard;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
@@ -20,7 +26,7 @@ class Card extends Resource
      */
     public static $model = \App\Models\Card::class;
 
-    public static $displayInNavigation = false;
+    public static $displayInNavigation = true;
 
 
     /**
@@ -58,7 +64,7 @@ class Card extends Resource
                 __('priority.low')=>'info',
             ])->sortable(),
             HasMany::make('Tags','assignedTags','App\Nova\Tag'),
-            BelongsToMany::make('assignedUsers','AssignedUsers','App\Nova\User')
+            BelongsToMany::make('AssignedUsers','assignedUsers','App\Nova\User')
 
         ];
     }
@@ -71,7 +77,9 @@ class Card extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            (new TotalCard),
+        ];
     }
 
     /**
@@ -82,7 +90,13 @@ class Card extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new Board,
+            new CardList,
+            new Priority,
+            new AssignedUsers,
+            new Tag,
+        ];
     }
 
     /**

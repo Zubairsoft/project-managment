@@ -44,11 +44,8 @@
         {
             "type": "path",
             "url": "./nova"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/TotalBoardList"
         }
+       
     ],
     "autoload-dev": {
         "psr-4": {
