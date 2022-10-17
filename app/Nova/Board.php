@@ -3,11 +3,13 @@
 namespace App\Nova;
 
 use App\Models\Board as ModelsBoard;
+use App\Nova\Filters\Board\CompanyFilter;
 use App\Nova\Metrics\AllCompanyBoard;
 use App\Nova\Metrics\BoardListsTotal;
 use App\Nova\Metrics\oardListsTotal;
 use App\Nova\Metrics\TotalBoard;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
@@ -22,13 +24,6 @@ class Board extends Resource
      * @var string
      */
     public static $model = \App\Models\Board::class;
-
-    // public static $group = 'Admin';  // this static property for make group for board with name= Admin in sidebar;
-   //  public static $with = ['lists'];  // this static property for edger loading with user ;
-    // public static $polling=true;// this will automatically fetch data when the model updated --real time
-   // public static $pollingInterval = 5; //property on your resource class with the number of seconds Nova should wait before fetching new resource records:
-    //public static $showPollingToggle = true; //  this will show toggle bottom for fetching data 
-    //public static $preventFormAbandonment = true;// set the important fill form before leaving
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -57,11 +52,13 @@ class Board extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('title','title')->sortable(),
-            HasMany::make('lists','lists','App\Nova\BoardList')
+            HasMany::make('lists','lists','App\Nova\BoardList'),
+            BelongsTo::make('Creator','creator','App\Nova\User')->canSeeWhen('canView',$this),
+
             
-            // Hidden::make('User', 'user_id')->default(function () {
-            //     return auth()->user()->id;
-            // }),
+            Hidden::make('User', 'user_id')->default(function () {
+                return auth()->user()->id;
+            }),
 
 
         ];
@@ -90,7 +87,9 @@ class Board extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            (new CompanyFilter)->canSeeWhen('canView',$this)
+        ];
     }
 
     /**

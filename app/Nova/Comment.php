@@ -2,40 +2,31 @@
 
 namespace App\Nova;
 
-use App\Nova\Filters\Card\AssignedUsers;
-use App\Nova\Filters\Card\Board;
-use App\Nova\Filters\Card\CardList;
-use App\Nova\Filters\Card\Priority;
-use App\Nova\Filters\Card\Tag;
-use App\Nova\Metrics\Card as MetricsCard;
-use App\Nova\Metrics\TotalCard;
+use App\Nova\Filters\Comment\BoardFilter;
+use App\Nova\Filters\Comment\CardFilter;
+use App\Nova\Filters\Comment\ListFilter;
+use App\Nova\Metrics\TotalOfComment;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Card extends Resource
+class Comment extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Card::class;
-
-    public static $displayInNavigation = true;
-
+    public static $model = \App\Models\Comment::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'title';
+    public static $title = 'comment';
 
     /**
      * The columns that should be searched.
@@ -43,7 +34,7 @@ class Card extends Resource
      * @var array
      */
     public static $search = [
-        'id','title','description','priorityStatus'
+        'id','comment',
     ];
 
     /**
@@ -56,17 +47,9 @@ class Card extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('title')->rules('required')->sortable(),
-            Text::make('description')->sortable(),
-            BelongsTo::make('List','list','App\Nova\BoardList'),
-            Badge::make('Priority','PriorityStatus')->map([
-                __('priority.high')=>'danger',
-                __('priority.medium')=>'warning',
-                __('priority.low')=>'info',
-            ])->sortable(),
-            HasMany::make('Tags','assignedTags','App\Nova\Tag'),
-            BelongsToMany::make('AssignedUsers','assignedUsers','App\Nova\User')
-
+            BelongsTo::make('CommentBy','user','App\Nova\User'),
+            Text::make('comment'),
+            BelongsTo::make('Card','card','App\Nova\Card'),
         ];
     }
 
@@ -79,10 +62,8 @@ class Card extends Resource
     public function cards(Request $request)
     {
         return [
-            (new TotalCard)->canSeeWhen('viewCard',$this),
-            (new MetricsCard)->help('your own card in the system')
+            (new TotalOfComment())->canSeeWhen('canView',$this)->help('the total of commend at all system')
         ];
-        ;
     }
 
     /**
@@ -94,11 +75,9 @@ class Card extends Resource
     public function filters(Request $request)
     {
         return [
-            new Board,
-            new CardList,
-            new Priority,
-            new AssignedUsers,
-            new Tag,
+             new BoardFilter,
+             new ListFilter,
+             new CardFilter
         ];
     }
 
@@ -124,20 +103,18 @@ class Card extends Resource
         return [];
     }
 
-    public static function uriKey()
-    {
-        return "list_card";
-    }
-
     public static function indexQuery(NovaRequest $request, $query)
     {
         if (auth()->user()->hasRole('admin')) {
             return $query;
         }
-        $query->whereHas('list',function($query){
-        $query->whereHas('board',function($query){
-        $query->where('user_id',auth()->user()->id);
-        });
+
+        return $query->whereHas('card',function($query){
+          $query->whereHas('list',function($query){
+            $query->whereHas('board',function($query){
+                $query->where('user_id',auth()->user()->id);
+            });
+          });
         });
     }
 }

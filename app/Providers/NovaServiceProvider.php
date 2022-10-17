@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Nova\Metrics\AllCompany;
 use App\Nova\Metrics\AllCompanyBoard;
 use App\Nova\Metrics\BoardFlow;
+use App\Nova\Metrics\Card;
 use App\Nova\Metrics\TotalBoard;
 use App\Nova\Metrics\TotalCard;
 use App\Nova\Metrics\TotalEmployee;
@@ -74,6 +75,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             (new BoardFlow)->help("board flow in the system")->width('full')->canSee(function(){
                 return auth()->user()->hasRole('admin');
             }),
+
             (new UsersPerDay)->width('full')->canSeeWhen('viewUsersCard',$this),
             (new TotalBoard)->canSeeWhen('showTotalCard',Board::class)->help('the total of board in the system'),
             (new TotalCard)->canSee(function(){
@@ -81,6 +83,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             }) ,
 
             (new AllCompanyBoard)->help("your own board in the system"),
+            (new Card)->help('your own cards at system'),
             new TotalEmployee
             
         ];

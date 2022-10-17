@@ -68,5 +68,14 @@ class CardPolicy
 
     }
 
+    /**
+     * determine how can view card Metrics
+     * @return [type]
+     */
+    public function viewCard()
+    {
+    return false;
+    }
+
   
 }

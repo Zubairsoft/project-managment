@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Nova\Filters\User;
+namespace App\Nova\Filters\List;
 
+use App\Models\Board;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Laravel\Nova\Filters\BooleanFilter;
-class CompanyOwner extends BooleanFilter
+use Laravel\Nova\Filters\Filter;
+
+class BoardFilter extends Filter
 {
     /**
      * The filter's component.
      *
      * @var string
      */
+    public $component = 'select-filter';
 
     /**
      * Apply the filter to the given query.
@@ -22,17 +24,8 @@ class CompanyOwner extends BooleanFilter
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(Request $request, $query, $value)
-    {   
-        Log::alert($value);
-        if (isset($value['true'])) {
-            if ($value['true']) {
-                return $query->whereHas('company');
-
-            }
-            return $query;
-
-        }
-            return $query;
+    {
+        return $query->where('board_id', $value);
     }
 
     /**
@@ -43,13 +36,14 @@ class CompanyOwner extends BooleanFilter
      */
     public function options(Request $request)
     {
-        return [
-            'owner'=>true,
-            
-        ];
+        if ($request->user()->hasRole('admin')) {
+            return  Board::pluck('id', 'title');
+        }
+        return Board::where('user_id', $request->user()->id)->pluck('id', 'title');
     }
 
-   
-
-
+    public function name()
+    {
+        return "Board";
+    }
 }

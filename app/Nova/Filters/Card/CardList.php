@@ -7,16 +7,36 @@ use App\Models\BoardList;
 use App\Models\Card;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Laravel\Nova\Filters\Filter;
+use AwesomeNova\Filters\DependentFilter;
 
-class CardList extends Filter
+class CardList extends DependentFilter
 {
+   /**
+     * Name of filter.
+     *
+     * @var string
+     */
+    public $name = 'list';
+    
+    /**
+     * Attribute name of filter. Also it is key of filter.
+     *
+     * @var string
+     */
+    public $attribute = 'list_id';
+
+    
+    
     /**
      * The filter's component.
      *
      * @var string
      */
-    public $component = 'select-filter';
+    public $component = 'awesome-nova-dependent-filter';
+
+    public $dependentOf = ['board_id'];
+
+    public $hideWhenEmpty = true;
 
     /**
      * Apply the filter to the given query.
@@ -38,11 +58,18 @@ class CardList extends Filter
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function options(Request $request)
+    public function options(Request $request, array  $filters=[])
     {
-    //     if (isset($_REQUEST['Board-filter-select'])) {
-    //   return BoardList::where('board_id',1)->pluck('id','name');
-    //     }
-       return BoardList::get()->pluck('id','name');
+       if (auth()->user()->hasRole('admin')) {
+        return BoardList::when($filters['board_id'],function($query,$value){
+            $query->where('board_id', $value);
+           })->pluck('name','id');
+       }
+
+       return BoardList::when($filters['board_id'],function($query,$value){
+        $query->whereHas('board',function($query) use($value){
+         $query->where('id',$value)->where('user_id',auth()->user()->id);
+        });
+       })->pluck('name','id');
     }
 }

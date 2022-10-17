@@ -44,4 +44,9 @@ class CommentPolicy
     {
         return $user->id===$comment->user_id;
     }
+
+    public function canView()
+    {
+        return false;
+    }
 }

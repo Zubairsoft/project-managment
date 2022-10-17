@@ -12,11 +12,13 @@ use App\Nova\Metrics\User\NewUsers;
 use App\Nova\Metrics\User\UsersPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Badge;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -94,8 +96,8 @@ class User extends Resource
                 ->onlyOnForms(),
             Hidden::make('company_id')->default(function () {
                 return auth()->user()->company_id;
-            }),
-            HasMany::make('Boards', 'boards', 'App\Nova\Board')
+            })->onlyOnForms(),
+            HasMany::make('Boards', 'boards', 'App\Nova\Board'),
 
         ];
     }
@@ -163,7 +165,9 @@ class User extends Resource
         if (auth()->user()->hasRole('admin')) {
             return $query;
         }
-        return $query->where('company_id',auth()->user()->company_id);
+       return $query->where('company_id',auth()->user()->company_id);
+      
+
     }
 
     

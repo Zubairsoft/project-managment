@@ -39,6 +39,10 @@ class AssignedUsers extends Filter
      */
     public function options(Request $request)
     {
-        return User::pluck('id','name');
+        if (auth()->user()->hasRole('admin')) {
+            return User::where('id','<>',auth()->user()->id)->pluck('id','name');
+        }
+
+        return User::where('company_id',auth()->user()->company_id)->pluck('id','name');
     }
 }

@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Nova\Filters\Card;
+namespace App\Nova\Filters\Comment;
 
-use App\Filter\FilterCardByBoard;
-use App\Models\Board as ModelsBoard;
+use App\Models\BoardList;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Laravel\Nova\Filters\Filter;
 use AwesomeNova\Filters\DependentFilter;
 
-
-class Board extends DependentFilter
+class ListFilter extends DependentFilter
 {
-    /**
+        /**
      * The filter's component.
      *
      * @var string
@@ -24,14 +20,17 @@ class Board extends DependentFilter
  *
  * @var string
  */
-   public $name = 'board';
+   public $name = 'list';
 
    /**
  * Attribute name of filter. Also it is key of filter.
  *
  * @var string
  */
-public $attribute = 'board_id';
+public $attribute = 'list_id';
+
+public $dependentOf = ['board_id'];
+
 
 
 
@@ -46,9 +45,9 @@ public $attribute = 'board_id';
      */
     public function apply(Request $request, $query, $value)
     {
-        $board=new FilterCardByBoard();
-      
-        return $board($query,$value);
+        return $query->whereHas('card',function($query)use($value){
+            $query->where('list_id',$value);
+        });
     }
 
     /**
@@ -57,13 +56,11 @@ public $attribute = 'board_id';
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function options(Request $request, array $filters = [])
+    public function options(Request $request,array $filters=[])
     {
-        if (auth()->user()->hasRole('admin')) {
-            return ModelsBoard::pluck('title','id');
-        }
-
-        return ModelsBoard::where('user_id',auth()->user()->id)->pluck('title','id');
-
+        
+      return  BoardList::when($filters['board_id'],function($query,$value){
+            $query->where('board_id',$value);
+        })->pluck('name','id');
     }
 }

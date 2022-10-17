@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\List\BoardFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
@@ -73,7 +74,9 @@ class BoardList extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new BoardFilter
+        ];
     }
 
     /**

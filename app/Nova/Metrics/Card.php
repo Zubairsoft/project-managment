@@ -2,15 +2,13 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\Board;
-use App\Models\BoardList;
-use Illuminate\Support\Facades\Log;
+use App\Models\Card as ModelsCard;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 
-class boardListsTotal extends Value
-{
-    
+class Card extends Value
+{ 
+
     /**
      * Calculate the value of the metric.
      *
@@ -18,9 +16,12 @@ class boardListsTotal extends Value
      * @return mixed
      */
     public function calculate(NovaRequest $request)
-    { 
-        //Log::alert($request);
-        return $this->count($request, BoardList::class)->suffix('list');
+    {
+        return $this->count($request, ModelsCard::whereHas('list',function($query){
+            $query->whereHas('board',function($query){
+             $query->where('user_id',auth()->user()->id);
+            });
+        }))->suffix('card');
     }
 
     /**
@@ -58,11 +59,6 @@ class boardListsTotal extends Value
      */
     public function uriKey()
     {
-        return 'board-lists-total';
-    }
-
-    public function name()
-    {
-        return 'List';
+        return 'card';
     }
 }
