@@ -15,6 +15,10 @@ class Board extends Model
         'user_id',
 
     ];
+    /**
+     * this limit static variable for determine the limit for boards in paginate in board
+     */
+    public static $limit=20;
 
 
     ################ Relation ####################

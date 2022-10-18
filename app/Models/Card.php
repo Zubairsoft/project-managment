@@ -23,6 +23,9 @@ class Card extends Model implements HasMedia
 
     const PRIORITY = [1, 2, 3];
 
+    // $limit static variable for determine the limit of card paginate 
+    public static $limit=20;
+
 
 
 
