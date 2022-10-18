@@ -101,7 +101,8 @@ class User extends Resource
 
             RoleSelect::make('Role', 'roles')
             ->onlyOnDetail()
-            ->onlyOnIndex(),
+            ->onlyOnIndex()
+            ->canSeeWhen('canView',$this),
 
             RoleSelect::make('Role', 'roles')
             ->onlyOnForms()->canSeeWhen('canView',$this),
