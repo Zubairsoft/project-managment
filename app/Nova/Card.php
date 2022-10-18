@@ -15,6 +15,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -57,15 +58,21 @@ class Card extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('title')->rules('required')->sortable(),
-            Text::make('description')->sortable(),
+            Text::make('description')->rules('required')->sortable(),
             BelongsTo::make('List','list','App\Nova\BoardList'),
+            Select::make('priority')->options([
+              1=>  __('priority.high'),
+              2=>  __('priority.medium'),
+              3=>  __('priority.low'),
+            ])->onlyOnForms(),
             Badge::make('Priority','PriorityStatus')->map([
                 __('priority.high')=>'danger',
                 __('priority.medium')=>'warning',
                 __('priority.low')=>'info',
-            ])->sortable(),
+            ])->sortable()->rules(['required']),
             HasMany::make('Tags','assignedTags','App\Nova\Tag'),
-            BelongsToMany::make('AssignedUsers','assignedUsers','App\Nova\User')
+            BelongsToMany::make('AssignedUsers','assignedUsers','App\Nova\User'),
+            HasMany::make('Comments','comments','App\Nova\Comment')
 
         ];
     }

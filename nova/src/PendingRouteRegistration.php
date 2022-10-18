@@ -26,7 +26,7 @@ class PendingRouteRegistration
             ->middleware($middleware)
             ->prefix(Nova::path())
             ->group(function () {
-                Route::get('/login', 'LoginController@showLoginForm');
+                Route::get('/login', 'LoginController@showLoginForm')->name('nova.show.login');
                 Route::post('/login', 'LoginController@login')->name('nova.login');
             });
 

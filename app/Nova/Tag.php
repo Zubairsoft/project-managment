@@ -2,10 +2,13 @@
 
 namespace App\Nova;
 
+use App\Models\Tag as ModelsTag;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -46,9 +49,14 @@ class Tag extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('name')->sortable(),
-            Text::make('color'),
+            Text::make('name')->rules('required')->sortable(),
+            Text::make('color')->onlyOnDetail()
+            ->onlyOnIndex(),
+            Select::make('color')->options(ModelsTag::COLOR)->rules('required')->onlyOnForms(),
             BelongsTo::make('Card','card','App\Nova\Card'),
+            Hidden::make('creator_id')->default(function(){
+                return auth()->user()->id;
+            })
         ];
     }
 

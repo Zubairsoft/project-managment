@@ -11,6 +11,7 @@
         "php": "^8.1",
         "awesome-nova/dependent-filter": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
+        "vyuldashev/nova-permission": "^3.0",
         "laravel/framework": "^9.19",
         "laravel/nova": "*",
         "laravel/passport": "^11.2",

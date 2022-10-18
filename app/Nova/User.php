@@ -22,6 +22,7 @@ use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Vyuldashev\NovaPermission\RoleSelect;
 
 class User extends Resource
 {
@@ -97,6 +98,22 @@ class User extends Resource
             Hidden::make('company_id')->default(function () {
                 return auth()->user()->company_id;
             })->onlyOnForms(),
+
+            RoleSelect::make('Role', 'roles')
+            ->onlyOnDetail()
+            ->onlyOnIndex(),
+
+            RoleSelect::make('Role', 'roles')
+            ->onlyOnForms()->canSeeWhen('canView',$this),
+
+            RoleSelect::make('Role', 'roles')->options('employee')->default(function(){
+                return 'employee';
+            })->onlyOnForms()->canSee(function(){
+              return  auth()->user()->hasRole('owner');
+            }),
+           
+
+
             HasMany::make('Boards', 'boards', 'App\Nova\Board'),
 
         ];
@@ -129,8 +146,8 @@ class User extends Resource
     {
         return [
             new UserActive,
-            (new CompanyEmployee)->canSeeWhen('filterAllow',$this),
-            (new CompanyOwner)->canSeeWhen('filterAllow',$this)
+            (new CompanyEmployee)->canSeeWhen('filterAllow', $this),
+            (new CompanyOwner)->canSeeWhen('filterAllow', $this)
         ];
     }
 
@@ -143,7 +160,7 @@ class User extends Resource
     public function lenses(Request $request)
     {
         return [
-            (new MostUsersHaveBoard)->canSee(function(){
+            (new MostUsersHaveBoard)->canSee(function () {
                 return auth()->user()->hasRole('admin');
             })
         ];
@@ -165,10 +182,6 @@ class User extends Resource
         if (auth()->user()->hasRole('admin')) {
             return $query;
         }
-       return $query->where('company_id',auth()->user()->company_id);
-      
-
+        return $query->where('company_id', auth()->user()->company_id);
     }
-
-    
 }

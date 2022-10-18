@@ -8,6 +8,7 @@ use App\Nova\Filters\Comment\ListFilter;
 use App\Nova\Metrics\TotalOfComment;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -47,9 +48,13 @@ class Comment extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            BelongsTo::make('CommentBy','user','App\Nova\User'),
+            BelongsTo::make('CommentBy','user','App\Nova\User')->onlyOnDetail()
+            ->onlyOnIndex(),
             Text::make('comment'),
             BelongsTo::make('Card','card','App\Nova\Card'),
+            Hidden::make('user_id')->default(function(){
+                return auth()->user()->id;
+            })->onlyOnForms()
         ];
     }
 

@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 // Scripts & Styles...
 Route::get('/scripts/{script}', 'ScriptController@show')->middleware(CheckResponseForModifications::class);
 Route::get('/styles/{style}', 'StyleController@show')->middleware(CheckResponseForModifications::class);
-
 // Global Search...
 Route::get('/search', 'SearchController@index');
 

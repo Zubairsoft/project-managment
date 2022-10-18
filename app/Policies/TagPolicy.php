@@ -30,6 +30,13 @@ class TagPolicy
        return $user->company_id===$tag->creator->company_id;
     }
 
+    public function view(User $user, Tag $tag)
+    {
+       return $user->company_id===$tag->creator->company_id;
+    }
+
+    
+
     /**
      * Determine whether the user can create models.
      *
@@ -62,5 +69,18 @@ class TagPolicy
     {
         return $user->id===$tag->creator_id;
     }
+
+    public function create(User $user)
+    {
+        return $user->hasRole('owner');
+    }
+
+    public function delete(User $user, Tag $tag)
+    {
+        return $user->id===$tag->creator_id;
+
+    }
+
+    
 
 }

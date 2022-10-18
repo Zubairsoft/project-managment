@@ -80,4 +80,8 @@ class EmployeePolicy
     {
         return false;
     }
+
+    public function canView(){
+        return false;
+    }
 }

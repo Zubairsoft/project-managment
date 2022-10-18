@@ -51,7 +51,9 @@ class Board extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('title','title')->sortable(),
+            Text::make('title','title')
+            ->rules('required')
+            ->sortable(),
             HasMany::make('lists','lists','App\Nova\BoardList'),
             BelongsTo::make('Creator','creator','App\Nova\User')->canSeeWhen('canView',$this),
 
@@ -75,7 +77,6 @@ class Board extends Resource
         return [
             (new TotalBoard)->canSeeWhen('showTotalCard',$this),
             new AllCompanyBoard,
-            (new BoardListsTotal())->onlyOnDetail()
         ];
     }
 
