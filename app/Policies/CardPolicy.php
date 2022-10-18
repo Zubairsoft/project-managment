@@ -10,6 +10,26 @@ class CardPolicy
 {
     use HandlesAuthorization;
 
+    public function view(User $user ,Card $card){
+        return $user->id===$card->list->board->user_id;
+    }
+
+    public function create(){
+        return true;
+    }
+
+    public function update(User $user ,Card $card)
+    {
+        return $user->id===$card->list->board->user_id;
+
+    }
+
+    public function delete(User $user ,Card $card)
+    {
+        return $user->id===$card->list->board->user_id;
+
+    }
+
   
 
     /**
@@ -46,6 +66,15 @@ class CardPolicy
             }
         }
 
+    }
+
+    /**
+     * determine how can view card Metrics
+     * @return [type]
+     */
+    public function viewCard()
+    {
+    return false;
     }
 
   

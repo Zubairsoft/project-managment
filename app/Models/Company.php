@@ -11,7 +11,8 @@ class Company extends Model
 
     protected $fillable = [
         'name',
-        'owner_id'
+        'owner_id',
+        'is_active'
     ];
 
 
@@ -26,5 +27,10 @@ class Company extends Model
         return $this->hasMany(User::class);
     }
 
+    ###############################################
+    ############## Accessor  ######################
+    public function getCompanyStatusAttribute(){
+      return  $this->is_active==true?__('auth.user.active'):__('auth.user.block');
+    }
     ###############################################
 }

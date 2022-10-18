@@ -9,13 +9,8 @@ class EmployeePolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-  
+
+
 
     /**
      * Determine whether the user can view the model.
@@ -26,19 +21,10 @@ class EmployeePolicy
      */
     public function show(User $user, User $employee)
     {
-        return $user->company_id===$employee->company_id;
+        return $user->company_id === $employee->company_id;
     }
 
-    /**
-     * Determine whether the user can create models.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function create(User $user)
-    {
-        //
-    }
+
 
     /**
      * Determine whether the user can update the model.
@@ -49,8 +35,7 @@ class EmployeePolicy
      */
     public function update(User $user, User $employee)
     {
-        return $user->company_id===$employee->company_id;
-
+        return $user->company_id === $employee->company_id;
     }
 
     /**
@@ -62,31 +47,41 @@ class EmployeePolicy
      */
     public function destroy(User $user, User $employee)
     {
-        return $user->company_id===$employee->company_id;
+        return $user->company_id === $employee->company_id;
+    }
 
+
+
+    public function viewUsersCard(User $user)
+    {
+        return $user->hasRole('admin');
+    }
+
+    public function create(User $user)
+    {
+        return true;
+    }
+
+    public function view(User $user, User $model)
+    {
+        return $user->company_id === $model->company_id;
+    }
+
+    public function delete(User $user, User $model)
+    {
+        return $user->company_id === $model->company_id;
     }
 
     /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
-     * @return \Illuminate\Auth\Access\Response|bool
+     * determine if the user can make filter
+     * @return [boolean]
      */
-    public function restore(User $user, User $model)
+    public function filterAllow()
     {
-        //
+        return false;
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function forceDelete(User $user, User $model)
-    {
-        //
+    public function canView(){
+        return false;
     }
 }

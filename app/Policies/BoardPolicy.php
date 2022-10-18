@@ -10,9 +10,9 @@ class BoardPolicy
 {
     use HandlesAuthorization;
 
- 
-    
-     /**
+
+
+    /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
@@ -21,7 +21,7 @@ class BoardPolicy
      */
     public function index(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
 
     /**
@@ -33,16 +33,16 @@ class BoardPolicy
      */
     public function show(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
 
     public function store(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
-    
 
- 
+
+
     /**
      * Determine whether the user can update the model.
      *
@@ -52,8 +52,7 @@ class BoardPolicy
      */
     public function update(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
-
+        return $user->id === $board->user_id;
     }
 
     /**
@@ -65,7 +64,7 @@ class BoardPolicy
      */
     public function destroy(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
 
     /**
@@ -75,9 +74,9 @@ class BoardPolicy
      * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function showAll(User $user,Board $board)
+    public function showAll(User $user, Board $board)
     {
-    return $user->company_id===$board->creator->company_id;
+        return $user->company_id === $board->creator->company_id;
     }
 
     /**
@@ -87,9 +86,9 @@ class BoardPolicy
      * 
      * @return [type]
      */
-    public function addNewCard(User $user,Board $board)
+    public function addNewCard(User $user, Board $board)
     {
-    return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
     /**
      * determine which user can add new card
@@ -98,9 +97,9 @@ class BoardPolicy
      * 
      * @return [type]
      */
-    public function addNewTag(User $user,Board $board)
+    public function addNewTag(User $user, Board $board)
     {
-    return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
 
     /**
@@ -110,9 +109,9 @@ class BoardPolicy
      * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function showSingleCard(User $user,Board $board)
+    public function showSingleCard(User $user, Board $board)
     {
-    return $user->company_id===$board->creator->company_id;
+        return $user->company_id === $board->creator->company_id;
     }
 
     /**
@@ -122,12 +121,11 @@ class BoardPolicy
      * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function updateCard(User $user,Board $board)
+    public function updateCard(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
-
+        return $user->id === $board->user_id;
     }
-    
+
     /**
      * determine which user can destroy card
      * @param User $user
@@ -135,29 +133,48 @@ class BoardPolicy
      * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function destroyCard(User $user,Board $board)
+    public function destroyCard(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
-
+        return $user->id === $board->user_id;
     }
 
 
-    
-    public function assignMember(User $user,Board $board)
+
+    public function assignMember(User $user, Board $board)
     {
-    return $user->id===$board->user_id;
+        return $user->id === $board->user_id;
     }
 
-    public function showAllMembers(User $user,Board $board)
+    public function showAllMembers(User $user, Board $board)
     {
-    return $user->company_id===$board->creator->company_id;
+        return $user->company_id === $board->creator->company_id;
     }
-    public function destroyMember(User $user,Board $board)
+    public function destroyMember(User $user, Board $board)
     {
-        return $user->id===$board->user_id;
-
+        return $user->id === $board->user_id;
+    }
+    public function create(User $user)
+    {
+        return true;
     }
 
-  
+    public function view(User $user, Board $board)
+    {
+        return $user->id === $board->user_id;
+    }
 
+    public function showTotalCard()
+    {
+        return false;
+    }
+
+    public function delete(User $user, Board $board)
+    {
+        return $user->id === $board->user_id;
+    }
+
+    public function canView()
+    {
+        return false;
+    }
 }

@@ -11,14 +11,18 @@ class BoardListPolicy
 {
     use HandlesAuthorization;
 
-     /**
+    /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Board  $board
      * @return \Illuminate\Auth\Access\Response|bool
      */
-   
+
+    public function viewAny()
+    {
+        return true;
+    }
     /**
      * Determine if the current user add list in his board
      * @param User $user
@@ -26,7 +30,26 @@ class BoardListPolicy
      * 
      * @return \Illuminate\Auth\Access\Response|bool
      */
-   
+
+     public function create()
+     {
+        return true;
+     }
+
+
+    
+    /**
+     * determain if the current user view model
+     * @param User $user
+     * @param BoardList $boardList
+     * 
+     * @return [type]
+     */
+    public function view(User $user,BoardList $boardList)
+    {
+        return $user->id===$boardList->board->user_id;
+    }
+
 
     /**
      * Determine whether the user can view the model.
@@ -37,10 +60,10 @@ class BoardListPolicy
      */
     public function show(User $user, BoardList $boardList)
     {
-        //
+        return $user->company_id === $boardList->board->company_id;
     }
 
-  
+
 
     /**
      * Determine whether the user can update the model.
@@ -51,7 +74,7 @@ class BoardListPolicy
      */
     public function update(User $user, BoardList $boardList)
     {
-        //
+        return $user->id === $boardList->board->user_id;
     }
 
     /**
@@ -63,7 +86,6 @@ class BoardListPolicy
      */
     public function delete(User $user, BoardList $boardList)
     {
-        //
+        return $user->id === $boardList->board->user_id;
     }
-
 }

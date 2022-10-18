@@ -2,12 +2,18 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.1",
+        "awesome-nova/dependent-filter": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
+        "vyuldashev/nova-permission": "^3.0",
         "laravel/framework": "^9.19",
+        "laravel/nova": "*",
         "laravel/passport": "^11.2",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
@@ -35,6 +41,13 @@
             "app/Helper/ApiResponse.php"
         ]
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./nova"
+        }
+       
+    ],
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"

@@ -10,7 +10,10 @@ class CommentPolicy
 {
     use HandlesAuthorization;
 
-   
+   public function create(User $user)
+   {
+   return true;
+   }
   
     /**
      * Determine whether the user can update the model.
@@ -43,5 +46,20 @@ class CommentPolicy
     public function destroy(User $user, Comment $comment)
     {
         return $user->id===$comment->user_id;
+    }
+
+    public function delete(User $user, Comment $comment)
+    {
+        return $user->id===$comment->user_id;
+    }
+
+    public function view(User $user, Comment $comment)
+    {
+        return $user->company_id===$comment->user->company_id;
+    }
+
+    public function canView()
+    {
+        return false;
     }
 }
